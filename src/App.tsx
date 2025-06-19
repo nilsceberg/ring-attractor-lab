@@ -12,9 +12,9 @@ const STATE = observable({
 const App = observer(() => {
   return (
     <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-col">
-      <div>
+      {/*<div>
         size: <input type="number" value={STATE.simulation.value} onChange={action(e => STATE.simulation.value = Number.parseFloat(e.target.value))}/>
-      </div>
+      </div>*/}
       <div className="grow overflow-hidden">
         <Ring state={STATE.simulation}/>
       </div>
