@@ -46,7 +46,7 @@ export const Ring = observer((props: { state: SimulationState }) => {
     const inputOutputOffset = 2 * Math.PI / props.state.neurons * 0.15;
     const startLocation = 2 * Math.PI / props.state.neurons * i + inputOutputOffset;
     const endLocation = 2 * Math.PI / props.state.neurons * j - inputOutputOffset;
-    const width = w / MAX_WEIGHT * MAX_THICKNESS;
+    const width = Math.abs(w) / MAX_WEIGHT * MAX_THICKNESS;
 
     return d3.ribbonArrow().headRadius(20).radius(200-5)({
       source: { startAngle: startLocation - width, endAngle: startLocation + width },
@@ -54,8 +54,8 @@ export const Ring = observer((props: { state: SimulationState }) => {
     } as any);
   };
 
-  const color = (i: number, w: number) => {
-    let opacity = w / MAX_WEIGHT * 0.5 + 0.5;
+  const ribbonColor = (i: number, w: number) => {
+    let opacity = Math.abs(w) / MAX_WEIGHT * 0.5 + 0.5;
     if (hovering !== null && hovering !== i) {
       opacity = Math.max(0.1, opacity - 0.8);
     }
@@ -63,28 +63,46 @@ export const Ring = observer((props: { state: SimulationState }) => {
       opacity = 1.0;
     }
 
+    if (w > 0.0) {
+      return `rgba(128, 128, 255, ${opacity})`;
+    }
+    else {
+      return `rgba(255, 128, 128, ${opacity})`;
+    }
+  };
+
+  const cellColor = (i: number) => {
+    const opacity = props.state.activity[i];
     return `rgba(255, 255, 255, ${opacity})`;
   };
 
   return (
     <svg className="w-full h-full" viewBox="-540 -540 1080 1080" ref={ref}>
       <g>
-        {arcs.map((d, i) => <path key={i} stroke="white" strokeWidth={2} d={arc(d as any) as string} onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(null)}/>)}
+        {arcs.map((d, i) => <path key={i} fill={cellColor(i)} stroke="white" strokeWidth={2} d={arc(d as any) as string} onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(null)}/>)}
       </g>
-      <g fill="white">
+      <g>
         {
           props.state.weights.map((row, i) =>
             <g key={i}>
-              {row.map((w, j) =>
-                <path key={j} fill={color(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(i, j, w) as any}/>
+              {row.map((w, j) => [w, j]).filter(([w, j]) => w <= 0).map(([w, j]) =>
+                <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(i, j, w) as any}/>
               )}
             </g>
           )
         }
       </g>
-      {/*<g>
-        <path fill="#ccc" d={ribbon({ source: arcs[0], target: arcs[3] })}/>
-      </g>*/}
+      <g>
+        {
+          props.state.weights.map((row, i) =>
+            <g key={i}>
+              {row.map((w, j) => [w, j]).filter(([w, j]) => w > 0).map(([w, j]) =>
+                <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(i, j, w) as any}/>
+              )}
+            </g>
+          )
+        }
+      </g>
     </svg>
   );
 });
