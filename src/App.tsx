@@ -9,12 +9,17 @@ import { Visualization } from "./Visualization";
 
 const STATE = observable({
   simulation: initialState(8),
+  history: [] as [number, number[]][],
 });
 
 const App = observer(() => {
   const dt = 0.01;
   useInterval(action(() => {
     STATE.simulation = step(STATE.simulation, dt);
+    STATE.history.push([STATE.simulation.time, STATE.simulation.activity]);
+    if (STATE.history.length > 1000) {
+      STATE.history.shift();
+    }
   }), dt * 1000);
 
   return (
@@ -24,7 +29,7 @@ const App = observer(() => {
           <Parameters state={STATE.simulation}/>
         </div>
         <div className="overflow-hidden grow basis-0">
-          <Visualization state={STATE.simulation}/>
+          <Visualization state={STATE.simulation} history={STATE.history}/>
         </div>
       </div>
     </div>
