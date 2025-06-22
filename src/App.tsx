@@ -26,10 +26,10 @@ const App = observer(() => {
   return (
     <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-col">
       <div className="grow overflow-hidden flex flex-row">
-        <div className="overflow-hidden grow basis-0">
+        <div className="overflow-hidden flex-1/2">
           <Parameters state={STATE.simulation}/>
         </div>
-        <div className="overflow-hidden grow basis-0">
+        <div className="overflow-hidden flex-1/2">
           <Visualization state={STATE.simulation} history={STATE.history}/>
         </div>
       </div>
