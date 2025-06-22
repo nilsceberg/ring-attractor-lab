@@ -77,7 +77,7 @@ export const Ring = observer((props: { state: SimulationState }) => {
   };
 
   return (
-    <svg className="w-full h-full" viewBox="-540 -540 1080 1080" ref={ref}>
+    <svg className="w-full h-full" viewBox="-400 -400 800 800" ref={ref}>
       <g>
         {arcs.map((d, i) => <path key={i} fill={cellColor(i)} stroke="white" strokeWidth={2} d={arc(d as any) as string} onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(null)}/>)}
       </g>

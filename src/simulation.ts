@@ -1,4 +1,4 @@
-import { Matrix, multiply, zeros, add, subtract, dotMultiply, map, SQRT1_2} from "mathjs";
+import { multiply, zeros, add, subtract, dotMultiply, map } from "mathjs";
 
 export interface SimulationState {
     time: number,
@@ -7,6 +7,7 @@ export interface SimulationState {
     weights: number[][],
     value: number,
     activity: number[],
+    volatility: number,
 }
 
 export function randomActivity(neurons: number): number[] {
@@ -41,6 +42,7 @@ export function initialState(neurons: number): SimulationState {
         value: 100,
         activity,
         time_constant: 0.1,
+        volatility: 0.01,
     }
 }
 
@@ -52,9 +54,11 @@ export function step(state: SimulationState, dt: number): SimulationState {
     const b = 0.4;
     const f = (x: number) => 1 / (1 + Math.exp(-a*(x - b)));
 
-    // du = 1/T (f(Wu) - u) dt
+    // du = 1/T [f(Wu) - u]dt + sdB
     const T = state.time_constant;
     newState.activity = add(state.activity, dotMultiply(subtract(map(multiply(state.weights, state.activity), f), state.activity), dt / T));
+    newState.activity = add(newState.activity, dotMultiply(randomActivity(state.neurons), state.volatility * Math.sqrt(dt)));
+    newState.activity = map(newState.activity, x => Math.max(0, Math.min(1, x)));
 
     return newState;
 }

@@ -6,6 +6,7 @@ import { initialState, step } from "./simulation";
 import { useInterval } from "usehooks-ts";
 import { Parameters } from "./Parameters";
 import { Visualization } from "./Visualization";
+import { DT, MAX_HISTORY_SAMPLES } from "./settings";
 
 const STATE = observable({
   simulation: initialState(8),
@@ -13,11 +14,11 @@ const STATE = observable({
 });
 
 const App = observer(() => {
-  const dt = 0.01;
+  const dt = DT;
   useInterval(action(() => {
     STATE.simulation = step(STATE.simulation, dt);
     STATE.history.push([STATE.simulation.time, STATE.simulation.activity]);
-    if (STATE.history.length > 1000) {
+    if (STATE.history.length > MAX_HISTORY_SAMPLES) {
       STATE.history.shift();
     }
   }), dt * 1000);
