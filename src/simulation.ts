@@ -46,7 +46,7 @@ export function initialState(neurons: number): SimulationState {
     }
 }
 
-export function step(state: SimulationState, dt: number): SimulationState {
+export function step(state: SimulationState, dt: number, inputAngle: number, inputStrength: number): SimulationState {
     const newState = Object.assign({}, state);
     newState.time += dt;
 
@@ -54,9 +54,16 @@ export function step(state: SimulationState, dt: number): SimulationState {
     const b = 0.4;
     const f = (x: number) => 1 / (1 + Math.exp(-a*(x - b)));
 
-    // du = 1/T [f(Wu) - u]dt + sdB
+    // input
+    const x = [];
+    let delta = 2 * Math.PI / state.neurons;
+    for (let i=0; i<state.neurons; ++i) {
+        x.push(inputStrength * Math.cos(inputAngle - delta * i));
+    }
+
+    // du = 1/T [f(Wu + x) - u]dt + sdB
     const T = state.time_constant;
-    newState.activity = add(state.activity, dotMultiply(subtract(map(multiply(state.weights, state.activity), f), state.activity), dt / T));
+    newState.activity = add(state.activity, dotMultiply(subtract(map(add(multiply(state.weights, state.activity), x), f), state.activity), dt / T));
     newState.activity = add(newState.activity, dotMultiply(randomActivity(state.neurons), state.volatility * Math.sqrt(dt)));
     newState.activity = map(newState.activity, x => Math.max(0, Math.min(1, x)));
 

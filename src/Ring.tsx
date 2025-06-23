@@ -14,7 +14,9 @@ const useSvg = (f: (element: d3.Selection<SVGSVGElement, any, any, any>) => void
   return ref;
 }
 
-export const Ring = observer((props: { state: SimulationState }) => {
+export const Ring = observer((props: { state: SimulationState, highlight: number | undefined, setHovering?: (i: number | undefined) => void }) => {
+  const highlight = props.highlight;
+
   const ref = useSvg(element => {
     //element
     //  .selectAll(".hello")
@@ -27,13 +29,10 @@ export const Ring = observer((props: { state: SimulationState }) => {
     //  .transition().duration(1000).attr("r", d => d);
   }, [props.state.value]);
 
-  const [hovering, setHovering] = useState<number | null>(null);
-
   const data: number[] = [];
   for (let i=0; i<props.state.neurons; ++i) {
     data.push(1);
   }
-
 
   const padAngle = 0.20;
   const pie = d3.pie().padAngle(padAngle).startAngle(-Math.PI/props.state.neurons);
@@ -56,10 +55,10 @@ export const Ring = observer((props: { state: SimulationState }) => {
 
   const ribbonColor = (i: number, w: number) => {
     let opacity = Math.abs(w) / MAX_WEIGHT * 0.5 + 0.5;
-    if (hovering !== null && hovering !== i) {
+    if (highlight !== undefined && highlight !== i) {
       opacity = Math.max(0.1, opacity - 0.8);
     }
-    if (hovering === i) {
+    if (highlight === i) {
       opacity = 1.0;
     }
 
@@ -67,7 +66,7 @@ export const Ring = observer((props: { state: SimulationState }) => {
       return `rgba(128, 128, 255, ${opacity})`;
     }
     else {
-      return `rgba(255, 128, 128, ${opacity})`;
+      return `rgba(255, 196, 128, ${opacity})`;
     }
   };
 
@@ -79,7 +78,7 @@ export const Ring = observer((props: { state: SimulationState }) => {
   return (
     <svg className="w-full h-full" viewBox="-400 -400 800 800" ref={ref}>
       <g>
-        {arcs.map((d, i) => <path key={i} fill={cellColor(i)} stroke="white" strokeWidth={2} d={arc(d as any) as string} onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(null)}/>)}
+        {arcs.map((d, i) => <path key={i} fill={cellColor(i)} stroke="white" strokeWidth={2} d={arc(d as any) as string} onMouseEnter={() => { if (props.setHovering) props.setHovering(i) }} onMouseLeave={() => { if (props.setHovering) props.setHovering(undefined) }}/>)}
       </g>
       <g>
         {

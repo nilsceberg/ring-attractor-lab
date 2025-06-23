@@ -3,16 +3,24 @@ import { SimulationState } from "./simulation";
 import { Ring } from "./Ring";
 import { Plot } from "./Plot";
 import * as d3 from "d3";
+import { useState } from "react";
+
+export interface HistoryEntry {
+    time: number,
+    activity: number[],
+    inputAngle: number,
+    inputStrength: number,
+}
 
 interface Props {
     state: SimulationState,
-    history: [number, number[]][],
+    history: HistoryEntry[],
 }
 
 function decodeAngle(activity: number[]) {
     let vector = [0, 0];
     let delta = 2 * Math.PI / activity.length;
-    for(let i=0; i<activity.length; ++i) {
+    for (let i=0; i<activity.length; ++i) {
         vector[0] += activity[i] * Math.cos(delta * i);
         vector[1] += activity[i] * Math.sin(delta * i);
     }
@@ -20,16 +28,31 @@ function decodeAngle(activity: number[]) {
 }
 
 export const Visualization = observer((props: Props) => {
+    const [hovering, setHovering] = useState<number | undefined>(undefined);
+
     return (
         <div className="flex flex-col h-full">
             <div className="flex-1/2 overflow-hidden">
-                <Ring state={props.state}/>
+                <Ring state={props.state} highlight={hovering} setHovering={setHovering}/>
             </div>
             <div className="flex-1/4 overflow-hidden">
-                <Plot yExtent={[0, 1]} xExtent={d3.extent(props.history, d => d[0])} curves={[props.history.map(d => [d[0], d[1][0]])]}/>
+                <Plot yExtent={[0, 1]}
+                      xExtent={d3.extent(props.history, d => d.time) as [number, number]}
+                      curves={props.state.activity.map((_, i) => props.history.map(d => [d.time, d.activity[i]]))}
+                      colors={props.state.activity.map((_, i) => hovering !== undefined && hovering !== i ? "rgba(255, 255, 255, 0.2)" : "white")}
+                      />
             </div>
             <div className="flex-1/4 overflow-hidden">
-                <Plot yExtent={[-Math.PI, Math.PI]} xExtent={d3.extent(props.history, d => d[0])} curves={[props.history.map(d => [d[0], decodeAngle(d[1])])]}/>
+                <Plot yExtent={[-Math.PI, Math.PI]}
+                      xExtent={d3.extent(props.history, d => d.time) as [number, number]}
+                      curves={[
+                        props.history.map(d => [d.time, decodeAngle(d.activity)]),
+                        props.history.map(d => [d.time, d.inputAngle]),
+                        //props.history.map(d => [d.time, d.inputStrength]),
+                      ]}
+                      colors={[
+                        "white", "gray"
+                      ]}/>
             </div>
         </div>
     )
