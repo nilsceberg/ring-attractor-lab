@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
-import { SimulationState, weightFunction } from "./simulation";
-import { Ring } from "./Ring";
+import { preferenceAngle, SimulationState, weightFunction } from "./simulation";
+import { cellStyle, Ring } from "./Ring";
 import { Plot } from "./Plot";
 import * as d3 from "d3";
 import { useState } from "react";
@@ -40,20 +40,11 @@ export const Plots = observer((props: Props) => {
     return (
         <div className="flex flex-row h-full w-full">
             <div className="flex-1/2 flex flex-col w-full">
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1/2 overflow-hidden">
                     <Plot yExtent={[-1, 1]}
                         xExtent={[-Math.PI, Math.PI]}
                         curves={[angles.map(phi => [phi, weightFunction(0, phi, props.inputs.a, props.inputs.b)])]}
-                        curveColors={["blue"]}
-                        />
-                </div>
-            </div>
-            <div className="flex-1/2 flex flex-col w-full">
-                <div className="flex-1/2 overflow-hidden">
-                    <Plot yExtent={[0, 1]}
-                        xExtent={timeExtent}
-                        curves={props.state.activity.map((_, i) => props.history.map(d => [d.time, d.activity[i]]))}
-                        curveColors={props.state.activity.map((_, i) => props.highlight !== undefined && props.highlight !== i ? "rgba(255, 255, 255, 0.2)" : "white")}
+                        curveColors={["rgb(128, 128, 255)"]}
                         />
                 </div>
                 <div className="flex-1/2 overflow-hidden">
@@ -67,6 +58,22 @@ export const Plots = observer((props: Props) => {
                         curveColors={[
                             "white", "gray"
                         ]}/>
+                </div>
+            </div>
+            <div className="flex-1/2 flex flex-col w-full">
+                <div className="flex-1/2 overflow-hidden">
+                    <Plot yExtent={[0, 1]}
+                        xExtent={[-1, props.state.neurons]}
+                        bars={[props.state.activity.map((a, i) => [i, a])]}
+                        barStyles={[props.state.activity.map((a, i) => cellStyle(a, i, props.highlight))]}
+                        />
+                </div>
+                <div className="flex-1/2 overflow-hidden">
+                    <Plot yExtent={[0, 1]}
+                        xExtent={timeExtent}
+                        curves={props.state.activity.map((_, i) => props.history.map(d => [d.time, d.activity[i]]))}
+                        curveColors={props.state.activity.map((_, i) => props.highlight !== undefined && props.highlight !== i ? "rgba(255, 255, 255, 0.2)" : "white")}
+                        />
                 </div>
             </div>
         </div>

@@ -14,6 +14,40 @@ const useSvg = (f: (element: d3.Selection<SVGSVGElement, any, any, any>) => void
   return ref;
 }
 
+function highlightOpacity(i: number, highlight: number | undefined): number {
+  if (highlight === undefined || highlight === i) {
+    return 1.0;
+  }
+  else {
+    return 0.2;
+  }
+}
+
+export function cellColor(a: number, i: number, highlight: number | undefined): string {
+  const opacity = a * highlightOpacity(i, highlight);
+  return `rgba(255, 255, 255, ${opacity})`;
+};
+
+export function cellStrokeColor(a: number, i: number, highlight: number | undefined): string {
+  const opacity = highlightOpacity(i, highlight);
+  return `rgba(255, 255, 255, ${opacity})`;
+};
+
+export function cellStrokeWidth(a: number, i: number, highlight: number | undefined): number {
+  return 2.0;
+};
+
+export function cellStyle(a: number, i: number, highlight: number | undefined): any {
+  return {
+    fill: cellColor(a, i, highlight),
+    stroke: cellStrokeColor(a, i, highlight),
+    strokeWidth: cellStrokeWidth(a, i, highlight),
+    style: {
+      transition: "stroke 0.2s, fill 0.1s",
+    }
+  };
+}
+
 export const Ring = observer((props: { state: SimulationState, highlight: number | undefined, setHovering?: (i: number | undefined) => void }) => {
   const highlight = props.highlight;
 
@@ -70,15 +104,10 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
     }
   };
 
-  const cellColor = (i: number) => {
-    const opacity = props.state.activity[i];
-    return `rgba(255, 255, 255, ${opacity})`;
-  };
-
   return (
     <svg className="w-full h-full" viewBox="-400 -400 800 800" ref={ref}>
       <g>
-        {arcs.map((d, i) => <path key={i} fill={cellColor(i)} stroke="white" strokeWidth={2} d={arc(d as any) as string} onMouseEnter={() => { if (props.setHovering) props.setHovering(i) }} onMouseLeave={() => { if (props.setHovering) props.setHovering(undefined) }}/>)}
+        {arcs.map((d, i) => <path key={i} {...cellStyle(props.state.activity[i], i, highlight)} d={arc(d as any) as string} onMouseEnter={() => { if (props.setHovering) props.setHovering(i) }} onMouseLeave={() => { if (props.setHovering) props.setHovering(undefined) }}/>)}
       </g>
       <g>
         {

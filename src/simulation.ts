@@ -30,6 +30,14 @@ export function weightFunction(theta: number, phi: number, a: number, b: number)
     return a + (1-a)*b*Math.cos(theta - phi);
 }
 
+export function preferenceAngle(neurons: number, i: number): number {
+    return wrapAngle(2 * Math.PI / neurons * i);
+}
+
+export function wrapAngle(theta: number): number {
+    const x = Math.sign(theta) * (Math.abs(theta) % (2 * Math.PI));
+    return (x + 3*Math.PI) % (2 * Math.PI) - Math.PI;
+}
 
 export function createWeights(neurons: number, a: number, b: number): number[][] {
     const weights = zeros([neurons, neurons]) as number[][];
@@ -39,8 +47,8 @@ export function createWeights(neurons: number, a: number, b: number): number[][]
                 continue;
             }
 
-            let theta = 2 * Math.PI / neurons * i;
-            let phi = 2 * Math.PI / neurons * j;
+            let theta = preferenceAngle(neurons, i); //2 * Math.PI / neurons * i;
+            let phi = preferenceAngle(neurons, j); //2 * Math.PI / neurons * j;
             weights[i][j] = weightFunction(theta, phi, a, b);
             //weights[i][j] -= c + (1-c)*d*Math.cos(theta - phi);
         }
