@@ -5,14 +5,13 @@ import { useEffect, useRef } from "react";
 
 interface PlotProps {
     curves: [number, number][][],
-    colors?: string[],
+    curveColors?: string[],
     xExtent: [number, number],
     yExtent: [number, number],
 }
 
 export const Plot = observer((props: PlotProps) => {
-    const [min, max] = props.xExtent;
-    const x = d3.scaleLinear().domain([min, min + MAX_HISTORY_DURATION]).range([0, 700]); //[props.history[0][0], props.history[props.history.length - 1][0]]);
+    const x = d3.scaleLinear().domain(props.xExtent).range([0, 700]); //[props.history[0][0], props.history[props.history.length - 1][0]]);
     const y = d3.scaleLinear().domain(props.yExtent).range([0, -150]);
     const lines = d3.line(d => x(d[0]), d => y(d[1]));
 
@@ -34,7 +33,7 @@ export const Plot = observer((props: PlotProps) => {
             <g ref={yAxis}/>
             {
                 props.curves.map((data, i) =>
-                    <path key={i} fill="transparent" stroke={props.colors ? props.colors[i] : "white"} strokeWidth="2" d={lines(data) as string}/>
+                    <path key={i} fill="transparent" stroke={props.curveColors ? props.curveColors[i] : "white"} strokeWidth="2" d={lines(data) as string}/>
                 )
             }
         </svg>

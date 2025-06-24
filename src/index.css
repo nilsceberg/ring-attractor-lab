@@ -9,3 +9,42 @@
     @apply grid place-items-center min-w-[320px] min-h-screen relative m-0;
   }
 }
+
+input[type="number"] {
+  border: 1px solid #ccc;
+  border-right: none;
+  outline: none;
+  height: 100%;
+}
+
+input[type="range"] {
+  border: 1px solid #ccc;
+
+  -webkit-appearance: none;
+  width: 100%;
+  height: 100%;
+  background: #555;
+  outline: none;
+  -webkit-transition: .2s;
+  transition: background-color .2s;
+
+  &:hover {
+    background-color: #777;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 5px;
+    height: 30px;
+    background: #eee;
+    cursor: ew-resize;
+  }
+
+  &::-moz-range-thumb {
+    width: 5px;
+    height: 30px;
+    background: #eee;
+    cursor: ew-resize;
+  }
+}

@@ -1,9 +1,11 @@
 import { observer } from "mobx-react-lite";
-import { SimulationState } from "./simulation";
+import { SimulationState, weightFunction } from "./simulation";
 import { Ring } from "./Ring";
 import { Plot } from "./Plot";
 import * as d3 from "d3";
 import { useState } from "react";
+import { MAX_HISTORY_DURATION } from "./settings";
+import { InputParameters } from "./Parameters";
 
 export interface HistoryEntry {
     time: number,
@@ -14,7 +16,9 @@ export interface HistoryEntry {
 
 interface Props {
     state: SimulationState,
+    inputs: InputParameters,
     history: HistoryEntry[],
+    highlight: number | undefined,
 }
 
 function decodeAngle(activity: number[]) {
@@ -28,29 +32,39 @@ function decodeAngle(activity: number[]) {
 }
 
 export const Plots = observer((props: Props) => {
-    const [hovering, setHovering] = useState<number | undefined>(undefined);
+    const [min, max] = d3.extent(props.history, d => d.time) as [number, number];
+    const timeExtent: [number, number] = [min, min + MAX_HISTORY_DURATION];
+
+    const angles = d3.range(-Math.PI, Math.PI, 0.1);
 
     return (
         <div className="flex flex-row h-full w-full">
             <div className="flex-1/2 flex flex-col w-full">
+                <div className="flex-1 overflow-hidden">
+                    <Plot yExtent={[-1, 1]}
+                        xExtent={[-Math.PI, Math.PI]}
+                        curves={[angles.map(phi => [phi, weightFunction(0, phi, props.inputs.a, props.inputs.b)])]}
+                        curveColors={["blue"]}
+                        />
+                </div>
             </div>
             <div className="flex-1/2 flex flex-col w-full">
                 <div className="flex-1/2 overflow-hidden">
                     <Plot yExtent={[0, 1]}
-                        xExtent={d3.extent(props.history, d => d.time) as [number, number]}
+                        xExtent={timeExtent}
                         curves={props.state.activity.map((_, i) => props.history.map(d => [d.time, d.activity[i]]))}
-                        colors={props.state.activity.map((_, i) => hovering !== undefined && hovering !== i ? "rgba(255, 255, 255, 0.2)" : "white")}
+                        curveColors={props.state.activity.map((_, i) => props.highlight !== undefined && props.highlight !== i ? "rgba(255, 255, 255, 0.2)" : "white")}
                         />
                 </div>
                 <div className="flex-1/2 overflow-hidden">
                     <Plot yExtent={[-Math.PI, Math.PI]}
-                        xExtent={d3.extent(props.history, d => d.time) as [number, number]}
+                        xExtent={timeExtent}
                         curves={[
                             props.history.map(d => [d.time, decodeAngle(d.activity)]),
                             props.history.map(d => [d.time, d.inputAngle]),
                             //props.history.map(d => [d.time, d.inputStrength]),
                         ]}
-                        colors={[
+                        curveColors={[
                             "white", "gray"
                         ]}/>
                 </div>

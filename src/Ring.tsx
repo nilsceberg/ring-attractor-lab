@@ -40,7 +40,7 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
   const arc = d3.arc().innerRadius(200).outerRadius(300).padAngle(padAngle);
 
   const MAX_WEIGHT = 2;
-  const MAX_THICKNESS = 0.1;
+  const MAX_THICKNESS = 0.05;
   const ribbon = (i: number, j: number, w: number) => {
     const inputOutputOffset = 2 * Math.PI / props.state.neurons * 0.15;
     const startLocation = 2 * Math.PI / props.state.neurons * i + inputOutputOffset;

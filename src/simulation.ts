@@ -26,6 +26,10 @@ export function whiteNoiseDifferential(neurons: number): number[] {
     return vector;
 }
 
+export function weightFunction(theta: number, phi: number, a: number, b: number): number {
+    return a + (1-a)*b*Math.cos(theta - phi);
+}
+
 
 export function createWeights(neurons: number, a: number, b: number): number[][] {
     const weights = zeros([neurons, neurons]) as number[][];
@@ -37,7 +41,7 @@ export function createWeights(neurons: number, a: number, b: number): number[][]
 
             let theta = 2 * Math.PI / neurons * i;
             let phi = 2 * Math.PI / neurons * j;
-            weights[i][j] = a + (1-a)*b*Math.cos(theta - phi);
+            weights[i][j] = weightFunction(theta, phi, a, b);
             //weights[i][j] -= c + (1-c)*d*Math.cos(theta - phi);
         }
     }

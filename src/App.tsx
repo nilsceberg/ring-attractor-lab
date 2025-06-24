@@ -40,7 +40,6 @@ const App = observer(() => {
     }
   }), dt * 1000);
 
-
   return (
     <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-col">
       <div className="flex-1/2 overflow-hidden flex flex-row">
@@ -52,7 +51,7 @@ const App = observer(() => {
         </div>
       </div>
       <div className="flex-1/2 overflow-hidden">
-        <Plots state={STATE.simulation} history={STATE.history}/>
+        <Plots state={STATE.simulation} history={STATE.history} inputs={STATE.inputs} highlight={STATE.highlight}/>
       </div>
     </div>
   );
