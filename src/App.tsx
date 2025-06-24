@@ -1,12 +1,13 @@
-import { action, observable } from "mobx";
+import { action, observable, reaction } from "mobx";
 import "./index.css";
 
 import { observer } from "mobx-react-lite";
-import { initialState, step } from "./simulation";
+import { createWeights, initialState, step } from "./simulation";
 import { useInterval } from "usehooks-ts";
 import { InputParameters, Parameters } from "./Parameters";
-import { HistoryEntry, Visualization } from "./Visualization";
+import { HistoryEntry, Plots } from "./Plots";
 import { DT, MAX_HISTORY_SAMPLES } from "./settings";
+import { Ring } from "./Ring";
 
 const STATE = observable({
   simulation: initialState(8),
@@ -14,14 +15,20 @@ const STATE = observable({
   inputs: {
     angle: 0,
     strength: 0,
-  } as InputParameters
+    a: 0,
+    b: 0,
+  } as InputParameters,
+  highlight: undefined as number | undefined,
 });
 
 const App = observer(() => {
-
   const dt = DT;
   useInterval(action(() => {
+    // TODO: we only need to do this when the parameters update
+    STATE.simulation.weights = createWeights(STATE.simulation.neurons, STATE.inputs.a, STATE.inputs.b);
+
     STATE.simulation = step(STATE.simulation, dt, STATE.inputs.angle, STATE.inputs.strength);
+
     STATE.history.push({
       time: STATE.simulation.time,
       activity: STATE.simulation.activity,
@@ -33,15 +40,19 @@ const App = observer(() => {
     }
   }), dt * 1000);
 
+
   return (
     <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-col">
-      <div className="grow overflow-hidden flex flex-row">
+      <div className="flex-1/2 overflow-hidden flex flex-row">
         <div className="overflow-hidden flex-1/2">
           <Parameters state={STATE.simulation} inputs={STATE.inputs}/>
         </div>
         <div className="overflow-hidden flex-1/2">
-          <Visualization state={STATE.simulation} history={STATE.history}/>
+          <Ring state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
         </div>
+      </div>
+      <div className="flex-1/2 overflow-hidden">
+        <Plots state={STATE.simulation} history={STATE.history}/>
       </div>
     </div>
   );

@@ -8,16 +8,18 @@ const Input = (props: PropsWithChildren<{ label: string }>) => {
 };
 
 const Numeric = (props: { value: number, min: number, max: number, onChange: (value: any) => void }) => {
-    return <input type="number" value={props.value} onChange={e => props.onChange(e.target.value)} max={props.max} min={props.min} />;
+    return <input type="number" value={props.value} onChange={e => props.onChange(parseFloat(e.target.value) || 0)} max={props.max} min={props.min} />;
 }
 
 const Slider = (props: { value: number, min: number, max: number, onChange: (value: any) => void }) => {
-    return <input type="range" value={props.value} onChange={e => props.onChange(e.target.value)} max={props.max} min={props.min} step={(props.max - props.min) / 100}/>;
+    return <input type="range" value={props.value} onChange={e => props.onChange(parseFloat(e.target.value) || 0)} max={props.max} min={props.min} step={(props.max - props.min) / 100}/>;
 }
 
 export interface InputParameters {
     angle: number,
     strength: number,
+    a: number,
+    b: number,
 }
 
 interface Props {
@@ -44,6 +46,14 @@ export const Parameters = observer((props: Props) => {
             <Input label="Compass strength">
                 <Numeric min={0} max={1} value={props.inputs.strength} onChange={action(value => props.inputs.strength = value)}/>
                 <Slider min={0} max={1} value={props.inputs.strength} onChange={action(value => props.inputs.strength = value)}/>
+            </Input>
+            <Input label="a">
+                <Numeric min={-1} max={1} value={props.inputs.a} onChange={action(value => props.inputs.a = value)}/>
+                <Slider min={-1} max={1} value={props.inputs.a} onChange={action(value => props.inputs.a = value)}/>
+            </Input>
+            <Input label="b">
+                <Numeric min={-1} max={1} value={props.inputs.b} onChange={action(value => {console.log(value); props.inputs.b = value})}/>
+                <Slider min={-1} max={1} value={props.inputs.b} onChange={action(value => props.inputs.b = value)}/>
             </Input>
         </div>
     )

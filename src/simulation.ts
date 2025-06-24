@@ -18,21 +18,34 @@ export function randomActivity(neurons: number): number[] {
     return activity;
 }
 
-export function initialState(neurons: number): SimulationState {
-    const weights = zeros([neurons, neurons]) as number[][];
+export function whiteNoiseDifferential(neurons: number): number[] {
+    const vector = [];
+    for (let i=0; i<neurons; ++i) {
+        vector.push(Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random()));
+    }
+    return vector;
+}
 
+
+export function createWeights(neurons: number, a: number, b: number): number[][] {
+    const weights = zeros([neurons, neurons]) as number[][];
     for (let i=0; i<neurons; ++i) {
         for (let j=0; j<neurons; ++j) {
             if (i == j) {
                 continue;
             }
 
-            let a = 2 * Math.PI / neurons * i;
-            let b = 2 * Math.PI / neurons * j;
-            weights[i][j] = Math.cos(a - b);
+            let theta = 2 * Math.PI / neurons * i;
+            let phi = 2 * Math.PI / neurons * j;
+            weights[i][j] = a + (1-a)*b*Math.cos(theta - phi);
+            //weights[i][j] -= c + (1-c)*d*Math.cos(theta - phi);
         }
     }
+    return weights;
+}
 
+export function initialState(neurons: number): SimulationState {
+    const weights = createWeights(neurons, 0, 0);
     const activity = randomActivity(neurons);
 
     return {
@@ -64,7 +77,7 @@ export function step(state: SimulationState, dt: number, inputAngle: number, inp
     // du = 1/T [f(Wu + x) - u]dt + sdB
     const T = state.time_constant;
     newState.activity = add(state.activity, dotMultiply(subtract(map(add(multiply(state.weights, state.activity), x), f), state.activity), dt / T));
-    newState.activity = add(newState.activity, dotMultiply(randomActivity(state.neurons), state.volatility * Math.sqrt(dt)));
+    newState.activity = add(newState.activity, dotMultiply(whiteNoiseDifferential(state.neurons), state.volatility * Math.sqrt(dt)));
     newState.activity = map(newState.activity, x => Math.max(0, Math.min(1, x)));
 
     return newState;
