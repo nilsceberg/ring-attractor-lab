@@ -1,12 +1,14 @@
 import { observer } from "mobx-react-lite";
-import { randomActivity, SimulationState } from "./simulation";
+import { createWeights, randomActivity, SimulationState } from "./simulation";
 import { PropsWithChildren } from "react";
 import { action } from "mobx";
 
 const Input = (props: PropsWithChildren<{ label: string }>) => {
-    return <div className="flex flex-row m-2 h-[30px]">
-        <div className="basis-0 grow-1 whitespace-nowrap overflow-hidden overflow-ellipsis text-left content-center h-full pr-4">{props.label}: </div>
-        {props.children}
+    return <div className="flex flex-col m-2 w-full">
+        <div className="whitespace-nowrap overflow-hidden overflow-ellipsis text-left content-center h-full pr-4 text-xs">{props.label}: </div>
+        <div className="flex flex-row h-[30px]">
+            {props.children}
+        </div>
     </div>;
 };
 
@@ -35,6 +37,11 @@ interface Props {
 }
 
 export const Parameters = observer((props: Props) => {
+    const weightAction = action((updater: (value: number) => void) => (value: number) => {
+        updater(value);
+        props.state.weights = createWeights(props.state.neurons, props.inputs.a, props.inputs.b);
+    });
+
     return (
         <div className="p-10 pt-10">
             {/*<button onClick={action(() => props.state.activity = randomActivity(props.state.neurons))}>Randomize activity</button>*/}
@@ -60,12 +67,12 @@ export const Parameters = observer((props: Props) => {
 
             <Divider>Connectivity</Divider>
             <Input label="a">
-                <Numeric min={-1} max={1} value={props.inputs.a} onChange={action(value => props.inputs.a = value)}/>
-                <Slider min={-1} max={1} value={props.inputs.a} onChange={action(value => props.inputs.a = value)}/>
+                <Numeric min={-1} max={1} value={props.inputs.a} onChange={weightAction(value => props.inputs.a = value)}/>
+                <Slider min={-1} max={1} value={props.inputs.a} onChange={weightAction(value => props.inputs.a = value)}/>
             </Input>
             <Input label="b">
-                <Numeric min={-1} max={1} value={props.inputs.b} onChange={action(value => {console.log(value); props.inputs.b = value})}/>
-                <Slider min={-1} max={1} value={props.inputs.b} onChange={action(value => props.inputs.b = value)}/>
+                <Numeric min={-1} max={1} value={props.inputs.b} onChange={weightAction(value => {console.log(value); props.inputs.b = value})}/>
+                <Slider min={-1} max={1} value={props.inputs.b} onChange={weightAction(value => props.inputs.b = value)}/>
             </Input>
         </div>
     )

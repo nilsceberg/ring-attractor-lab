@@ -71,7 +71,7 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
   const padAngle = 0.20;
   const pie = d3.pie().padAngle(padAngle).startAngle(-Math.PI/props.state.neurons);
   const arcs = pie(data);
-  const arc = d3.arc().innerRadius(200).outerRadius(300).padAngle(padAngle);
+  const arc = d3.arc().innerRadius(250).outerRadius(350).padAngle(padAngle);
 
   const MAX_WEIGHT = 2;
   const MAX_THICKNESS = 0.05;
@@ -96,7 +96,7 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
       opacity = 1.0;
     }
 
-    if (w > 0.0) {
+    if (w < 0.0) {
       return `rgba(128, 128, 255, ${opacity})`;
     }
     else {
