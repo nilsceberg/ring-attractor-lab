@@ -8,7 +8,7 @@ const MAX_WEIGHT = 2.0;
 const colorMap = (i: number, w: number, highlight: number | undefined) => {
     let opacity = Math.abs(w) / MAX_WEIGHT * 0.5 + 0.5;
     if (highlight !== undefined && highlight !== i) {
-        opacity = Math.max(0.1, opacity - 0.1);
+        //opacity = Math.max(0.1, opacity - 0.1);
     }
     if (highlight === i) {
         opacity = 1.0;
@@ -58,7 +58,7 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                                 });
 
                                 return (
-                                    <div key={j} className="w-[50px] h-[50px] border-1 border-[#888]">
+                                    <div key={j} className="w-[56px] h-[56px] border-1 border-[#888]">
                                         <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur}/>
                                     </div>
                                     );
