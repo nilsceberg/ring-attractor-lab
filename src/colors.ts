@@ -1,0 +1,1 @@
+export const EXCITE = "rgb(128, 128, 255)";

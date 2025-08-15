@@ -1,11 +1,12 @@
 import { observer } from "mobx-react-lite";
-import { preferenceAngle, SimulationState, weightFunction } from "./simulation";
+import { preferenceAngle, SimulationState, weightFunction, wrapAngle } from "./simulation";
 import { cellStyle, Ring } from "./Ring";
 import { Plot } from "./Plot";
 import * as d3 from "d3";
 import { useState } from "react";
 import { MAX_HISTORY_DURATION } from "./settings";
 import { InputParameters } from "./Parameters";
+import { ActivityHistory } from "./ActivityHistory";
 
 export interface HistoryEntry {
     time: number,
@@ -36,6 +37,7 @@ export const Plots = observer((props: Props) => {
     const timeExtent: [number, number] = [min, min + MAX_HISTORY_DURATION];
 
     const angles = d3.range(-Math.PI, Math.PI, 0.1);
+    const fieldOffset = Math.PI / props.state.neurons;
 
     return (
         <div className="flex flex-row h-full w-full">
@@ -48,11 +50,12 @@ export const Plots = observer((props: Props) => {
                         />
                 </div>
                 <div className="flex-1/2 overflow-hidden">
-                    <Plot yExtent={[-Math.PI, Math.PI]}
+                    <ActivityHistory yExtent={[-Math.PI - fieldOffset, Math.PI - fieldOffset]}
                         xExtent={timeExtent}
+                        history={props.history}
                         curves={[
-                            props.history.map(d => [d.time, decodeAngle(d.activity)]),
-                            props.history.map(d => [d.time, d.inputAngle]),
+                            props.history.map(d => [d.time, wrapAngle(decodeAngle(d.activity), Math.PI / props.state.neurons)]),
+                            props.history.map(d => [d.time, wrapAngle(d.inputAngle, fieldOffset)]),
                             //props.history.map(d => [d.time, d.inputStrength]),
                         ]}
                         curveColors={[

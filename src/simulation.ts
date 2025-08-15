@@ -35,9 +35,9 @@ export function preferenceAngle(neurons: number, i: number): number {
     return wrapAngle(2 * Math.PI / neurons * i);
 }
 
-export function wrapAngle(theta: number): number {
+export function wrapAngle(theta: number, offset: number = 0): number {
     const x = Math.sign(theta) * (Math.abs(theta) % (2 * Math.PI));
-    return (x + 3*Math.PI) % (2 * Math.PI) - Math.PI;
+    return (x + offset + 3*Math.PI) % (2 * Math.PI) - Math.PI - offset;
 }
 
 export function createWeights(neurons: number, a: number, b: number): number[][] {
