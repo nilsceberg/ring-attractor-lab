@@ -59,17 +59,17 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
                     )
                 }
             </g>
-            <g>
+            {/*<g>
                 {
-                    props.history.map(entry => entry.activity.map(
+                    props.history.map((entry, j) => <g key={j}>{entry.activity.map(
                         (a, i) => {
                             const field = 2 * Math.PI / entry.activity.length;
                             const angle = preferenceAngle(entry.activity.length, i) + field / 2;
-                            return <rect x={x(entry.time) + 1} width={x(DT) - x(0)} y={y(angle)} height={y(0) - y(field)} strokeWidth={0} opacity={a} fill={EXCITE}/>;
-                        })
+                            return <rect key={i} x={x(entry.time) + 1} width={x(DT) - x(0)} y={y(angle)} height={y(0) - y(field)} strokeWidth={0} opacity={a} fill={EXCITE}/>;
+                        })}</g>
                     )
                 }
-            </g>
+            </g>*/}
             <g>
                 {
                     curves.map((data, i) =>

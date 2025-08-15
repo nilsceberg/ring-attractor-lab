@@ -9,6 +9,13 @@ export interface SimulationState {
     value: number,
     activity: number[],
     volatility: number,
+    paused: boolean,
+}
+
+export interface Stimulus {
+    location: number,
+    width: number,
+    strength: number,
 }
 
 export function randomActivity(neurons: number): number[] {
@@ -69,10 +76,21 @@ export function initialState(neurons: number): SimulationState {
         activity,
         time_constant: 0.1,
         volatility: 0.01,
+        paused: false,
     }
 }
 
-export function step(state: SimulationState, dt: number, inputAngle: number, inputStrength: number): SimulationState {
+export function sampleStimulus(stimulus: Stimulus, at: number): number {
+    if (Math.abs(wrapAngle(at - stimulus.location)) < stimulus.width) {
+        // inputStrength * Math.cos(inputAngle - delta * i));
+        return stimulus.strength;
+    }
+    else {
+        return 0;
+    }
+}
+
+export function step(state: SimulationState, dt: number, stimuli: Stimulus[]): SimulationState {
     const newState = Object.assign({}, state);
     newState.time += dt;
 
@@ -81,15 +99,19 @@ export function step(state: SimulationState, dt: number, inputAngle: number, inp
     const f = (x: number) => 1 / (1 + Math.exp(-a*(x - b)));
 
     // input
-    const x = [];
+    const inputs = [];
     let delta = 2 * Math.PI / state.neurons;
     for (let i=0; i<state.neurons; ++i) {
-        x.push(inputStrength * Math.cos(inputAngle - delta * i));
+        let x = 0;
+        for (let j=0; j<stimuli.length; ++j) {
+            x += sampleStimulus(stimuli[j], i * delta);
+        }
+        inputs.push(x);
     }
 
     // du = 1/T [f(Wu + x) - u]dt + sdB
     const T = state.time_constant;
-    newState.activity = add(state.activity, dotMultiply(subtract(map(add(multiply(state.weights, state.activity), x), f), state.activity), dt / T));
+    newState.activity = add(state.activity, dotMultiply(subtract(map(add(multiply(state.weights, state.activity), inputs), f), state.activity), dt / T));
     newState.activity = add(newState.activity, dotMultiply(whiteNoiseDifferential(state.neurons), state.volatility * Math.sqrt(dt)));
     newState.activity = map(newState.activity, x => Math.max(0, Math.min(1, x)));
 

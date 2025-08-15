@@ -2,20 +2,27 @@ import { action, autorun, observable, reaction } from "mobx";
 import "./index.css";
 
 import { observer } from "mobx-react-lite";
-import { createWeights, initialState, step } from "./simulation";
+import { createWeights, initialState, step, Stimulus } from "./simulation";
 import { useInterval } from "usehooks-ts";
 import { InputParameters, Parameters } from "./Parameters";
 import { HistoryEntry, Plots } from "./Plots";
 import { DT, MAX_HISTORY_SAMPLES } from "./settings";
 import { Ring } from "./Ring";
 import { Matrix } from "./Matrix";
+import { useEffect } from "react";
 
 const STATE = observable({
   simulation: initialState(8),
   history: [] as HistoryEntry[],
   inputs: {
-    angle: 0,
-    strength: 0,
+    angleA: 0,
+    strengthA: 0,
+    activeA: false,
+    widthA: 1,
+    angleB: 0,
+    strengthB: 0,
+    activeB: false,
+    widthB: 0.5,
     a: 0,
     b: 0,
   } as InputParameters,
@@ -25,18 +32,43 @@ const STATE = observable({
 const App = observer(() => {
   const dt = DT;
   useInterval(action(() => {
-    STATE.simulation = step(STATE.simulation, dt, STATE.inputs.angle, STATE.inputs.strength);
+    if (STATE.simulation.paused) return;
+
+    const stimuli: Stimulus[] = [
+      {
+        location: STATE.inputs.angleA,
+        width: STATE.inputs.widthA,
+        strength: STATE.inputs.activeA ? STATE.inputs.strengthA : 0,
+      },
+      {
+        location: STATE.inputs.angleB,
+        width: STATE.inputs.widthB,
+        strength: STATE.inputs.activeB ? STATE.inputs.strengthB : 0,
+      },
+    ];
+    STATE.simulation = step(STATE.simulation, dt, stimuli);
 
     STATE.history.push({
       time: STATE.simulation.time,
       activity: STATE.simulation.activity,
-      inputAngle: STATE.inputs.angle,
-      inputStrength: STATE.inputs.strength,
+      stimuli,
     });
     if (STATE.history.length > MAX_HISTORY_SAMPLES) {
       STATE.history.shift();
     }
   }), dt * 1000);
+
+  useEffect(() => {
+    // TODO: do we need to clean this up?
+    window.onkeydown = e => {
+      console.log(e);
+      if (e.code === "Space") {
+        action(() => STATE.simulation.paused = !STATE.simulation.paused)();
+        return false;
+      }
+      return true;
+    };
+  })
 
   return (
     <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-col">

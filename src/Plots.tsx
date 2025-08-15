@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { preferenceAngle, SimulationState, weightFunction, wrapAngle } from "./simulation";
+import { preferenceAngle, SimulationState, Stimulus, weightFunction, wrapAngle } from "./simulation";
 import { cellStyle, Ring } from "./Ring";
 import { Plot } from "./Plot";
 import * as d3 from "d3";
@@ -11,8 +11,7 @@ import { ActivityHistory } from "./ActivityHistory";
 export interface HistoryEntry {
     time: number,
     activity: number[],
-    inputAngle: number,
-    inputStrength: number,
+    stimuli: Stimulus[],
 }
 
 interface Props {
@@ -39,6 +38,8 @@ export const Plots = observer((props: Props) => {
     const angles = d3.range(-Math.PI, Math.PI, 0.1);
     const fieldOffset = Math.PI / props.state.neurons;
 
+    const STIMULI = [0, 1];
+
     return (
         <div className="flex flex-row h-full w-full">
             <div className="flex-1/2 flex flex-col w-full">
@@ -53,13 +54,13 @@ export const Plots = observer((props: Props) => {
                     <ActivityHistory yExtent={[-Math.PI - fieldOffset, Math.PI - fieldOffset]}
                         xExtent={timeExtent}
                         history={props.history}
-                        curves={[
-                            props.history.map(d => [d.time, wrapAngle(decodeAngle(d.activity), Math.PI / props.state.neurons)]),
-                            props.history.map(d => [d.time, wrapAngle(d.inputAngle, fieldOffset)]),
-                            //props.history.map(d => [d.time, d.inputStrength]),
-                        ]}
+                        curves={
+                            [
+                                props.history.map(d => [d.time, wrapAngle(decodeAngle(d.activity), Math.PI / props.state.neurons)])
+                            ].concat(STIMULI.map((_, index) => props.history.map(d => [d.time, wrapAngle(d.stimuli[index].location, fieldOffset)])))
+                        }
                         curveColors={[
-                            "white", "gray"
+                            "white", "red", "green",
                         ]}/>
                 </div>
             </div>
