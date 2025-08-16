@@ -114,7 +114,7 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
           props.state.weights.map((row, i) =>
             <g key={i}>
               {row.map((w, j) => [w, j]).filter(([w, j]) => w <= 0).map(([w, j]) =>
-                <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(i, j, w) as any}/>
+                <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(j, i, w) as any}/>
               )}
             </g>
           )
@@ -125,7 +125,7 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
           props.state.weights.map((row, i) =>
             <g key={i}>
               {row.map((w, j) => [w, j]).filter(([w, j]) => w > 0).map(([w, j]) =>
-                <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(i, j, w) as any}/>
+                <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(j, i, w) as any}/>
               )}
             </g>
           )
