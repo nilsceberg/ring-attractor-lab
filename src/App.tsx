@@ -78,11 +78,11 @@ const App = observer(() => {
         <div className="overflow-hidden flex-1/3">
           <Parameters state={STATE.simulation} inputs={STATE.inputs}/>
         </div>
-        <div className="flex-1/3">
+        <div className="flex-1/3 pt-5">
           <Ring state={STATE.simulation} stimuli={stimuli} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
         </div>
         {/*<div className="overflow-hidden flex-1/4"/>*/}
-        <div className="overflow-hidden flex-1/3">
+        <div className="overflow-hidden flex-1/3 pt-5">
           <StateSpace state={STATE.simulation}/>
         </div>
       </div>

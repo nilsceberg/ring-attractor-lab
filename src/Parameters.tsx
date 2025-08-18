@@ -54,7 +54,7 @@ export const Parameters = observer((props: Props) => {
     const maxAngle = Math.PI - (Math.PI / props.state.neurons);
 
     return (
-        <div className="p-10 pt-4">
+        <div className="p-10 pt-10">
             {/*<button onClick={action(() => props.state.activity = randomActivity(props.state.neurons))}>Randomize activity</button>*/}
             {/*<Divider>Simulation</Divider>*/}
             {/*<Input label="Neuronal time constant">
