@@ -6,7 +6,7 @@ import { action } from "mobx";
 
 const MAX_WEIGHT = 2.0;
 const colorMap = (i: number, w: number, highlight: number | undefined) => {
-    let opacity = Math.abs(w) / MAX_WEIGHT * 0.5 + 0.5;
+    let opacity = Math.abs(w) / MAX_WEIGHT * 0.8 + 0.2;
     if (highlight !== undefined && highlight !== i) {
         //opacity = Math.max(0.1, opacity - 0.1);
     }
@@ -34,7 +34,7 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
     return (
         <div className="w-full h-full flex flex-row items-center">
             <div className="grow"/>
-            <div className="flex flex-col border-1">
+            <div className="flex flex-col border-1 border-gray-400">
                 {
                     props.state.weights.map((row, i) => (
                         <div key={i} className="flex flex-row" onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(undefined)}>
@@ -58,7 +58,7 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                                 });
 
                                 return (
-                                    <div key={j} className="w-[56px] h-[56px] border-1 border-[#888]">
+                                    <div key={j} className="w-[50px] h-[50px] border-1 border-[#666]">
                                         <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur}/>
                                     </div>
                                     );

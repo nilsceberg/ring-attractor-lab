@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import * as d3 from "d3";
 import { MAX_HISTORY_DURATION } from "./settings";
 import { useEffect, useRef } from "react";
+import { LINES } from "./colors";
 
 interface PlotProps {
     curves?: [number, number][][],
@@ -46,7 +47,7 @@ export const Plot = observer((props: PlotProps) => {
                                     const rx = x(band) - rw/2;
                                     const ry = y(height);
                                     const rh = Math.abs(ry);
-                                    const style = props.barStyles ? props.barStyles[i][j] : { stroke: "white", fill: "gray", strokeWidth: 1 };
+                                    const style = props.barStyles ? props.barStyles[i][j] : { stroke: LINES, fill: "gray", strokeWidth: 1 };
                                     style.strokeWidth = 1;
                                     return <rect key={j} x={rx} y={ry} width={rw} height={rh} {...style}/>;
                                 })

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { MAX_HISTORY_DURATION } from "./settings";
 import { InputParameters } from "./Parameters";
 import { ActivityHistory } from "./ActivityHistory";
+import * as colors from "./colors";
 
 export interface HistoryEntry {
     time: number,
@@ -48,9 +49,8 @@ export const Plots = observer((props: Props) => {
                             props.history.map(d => [d.time, wrapAngle(decodeAngle(d.activity), Math.PI / props.state.neurons)])
                         ].concat(STIMULI.map((_, index) => props.history.map(d => [d.time, wrapAngle(d.stimuli[index].location, fieldOffset)])))
                     }
-                    curveColors={[
-                        "white", "red", "green",
-                    ]}/>
+                    curveColors={["white"].concat(colors.STIMULI)}
+                    />
             </div>
         </div>
     )

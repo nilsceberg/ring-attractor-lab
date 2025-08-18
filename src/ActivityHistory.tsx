@@ -4,7 +4,7 @@ import { DT, MAX_HISTORY_DURATION, MAX_HISTORY_SAMPLES } from "./settings";
 import { act, useEffect, useRef } from "react";
 import { HistoryEntry } from "./Plots";
 import { preferenceAngle } from "./simulation";
-import { EXCITE } from "./colors";
+import { EXCITE, LINES } from "./colors";
 import { PNG } from 'pngjs/browser';
 
 interface ActivityHistoryProps {
@@ -67,7 +67,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
                                         const rx = x(band) - rw/2;
                                         const ry = y(height);
                                         const rh = Math.abs(ry);
-                                        const style = props.barStyles ? props.barStyles[i][j] : { stroke: "white", fill: "gray", strokeWidth: 1 };
+                                        const style = props.barStyles ? props.barStyles[i][j] : { stroke: LINES, fill: "gray", strokeWidth: 1 };
                                         style.strokeWidth = 1;
                                         return <rect key={j} x={rx} y={ry} width={rw} height={rh} {...style}/>;
                                     })

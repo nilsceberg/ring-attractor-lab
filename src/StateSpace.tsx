@@ -1,8 +1,9 @@
 import * as d3 from "d3";
 import { observer } from "mobx-react-lite";
 import { populationVectorAverage, SimulationState, wrapAngle } from "./simulation";
+import { LINES } from "./colors";
 
-const GRID_COLOR="gray";
+const GRID_COLOR=LINES;
 const RADII = 16;
 
 export const StateSpace = observer((props: { state: SimulationState }) => {

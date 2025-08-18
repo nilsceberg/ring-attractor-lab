@@ -77,8 +77,8 @@ const App = observer(() => {
         <div className="overflow-hidden flex-1/3">
           <Parameters state={STATE.simulation} inputs={STATE.inputs}/>
         </div>
-        <div className="overflow-hidden flex-1/3">
-          <Matrix state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
+        <div className="flex-1/3">
+          <Ring state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
         </div>
         {/*<div className="overflow-hidden flex-1/4"/>*/}
         <div className="overflow-hidden flex-1/3">
@@ -86,11 +86,11 @@ const App = observer(() => {
         </div>
       </div>
       <div className="flex-1/2 overflow-hidden flex flex-row">
+        <div className="overflow-hidden flex-1/3">
+          <Matrix state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
+        </div>
         <div className="flex-2/3">
           <Plots state={STATE.simulation} history={STATE.history} inputs={STATE.inputs} highlight={STATE.highlight}/>
-        </div>
-        <div className="flex-1/3">
-          <Ring state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
         </div>
       </div>
     </div>
