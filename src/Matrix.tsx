@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { SimulationState } from "./simulation";
 import { ChangeEvent, FocusEvent, useState } from "react";
 import { action } from "mobx";
+import { Label } from "./Label";
 
 
 const MAX_WEIGHT = 2.0;
@@ -32,46 +33,49 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
     const [value, setValue] = useState("");
 
     return (
-        <div className="w-full h-full flex flex-row items-center">
-            <div className="grow"/>
-            <div className="flex flex-col border-1 border-gray-400">
-                {
-                    props.state.weights.map((row, i) => (
-                        <div key={i} className="flex flex-row" onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(undefined)}>
-                            { row.map((w, j) => {
-                                const isBeingEdited = editing !== null && editing[0] === i && editing[1] === j;
-                                const inputValue = isBeingEdited ? value : w.toFixed(2);
+        <>
+            <Label>Connectivity matrix</Label>
+            <div className="w-full h-full flex flex-row items-center">
+                <div className="grow"/>
+                <div className="flex flex-col border-1 border-gray-400">
+                    {
+                        props.state.weights.map((row, i) => (
+                            <div key={i} className="flex flex-row" onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(undefined)}>
+                                { row.map((w, j) => {
+                                    const isBeingEdited = editing !== null && editing[0] === i && editing[1] === j;
+                                    const inputValue = isBeingEdited ? value : w.toFixed(2);
 
-                                const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-                                    setEditing([i, j]);
-                                    setValue(event.target.value);
-                                };
+                                    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+                                        setEditing([i, j]);
+                                        setValue(event.target.value);
+                                    };
 
-                                const onBlur = action(() => {
-                                    if (isBeingEdited) {
-                                        const finalValue = Number.parseFloat(inputValue);
-                                        if (!Number.isNaN(finalValue)) {
-                                            props.state.weights[i][j] = finalValue;
+                                    const onBlur = action(() => {
+                                        if (isBeingEdited) {
+                                            const finalValue = Number.parseFloat(inputValue);
+                                            if (!Number.isNaN(finalValue)) {
+                                                props.state.weights[i][j] = finalValue;
+                                            }
                                         }
+                                        setEditing(null);
+                                    });
+
+                                    const onFocus = (e: FocusEvent<HTMLInputElement>) => e.target.select();
+
+                                    return (
+                                        <div key={j} className="w-[50px] h-[50px] border-1 border-[#666]">
+                                            <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
+                                        </div>
+                                        );
                                     }
-                                    setEditing(null);
-                                });
-
-                                const onFocus = (e: FocusEvent<HTMLInputElement>) => e.target.select();
-
-                                return (
-                                    <div key={j} className="w-[50px] h-[50px] border-1 border-[#666]">
-                                        <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
-                                    </div>
-                                    );
-                                }
-                            ) }
-                        </div>
-                    ))
-                }
+                                ) }
+                            </div>
+                        ))
+                    }
+                </div>
+                <div className="grow"/>
             </div>
-            <div className="grow"/>
-        </div>
+        </>
     );
 });
 

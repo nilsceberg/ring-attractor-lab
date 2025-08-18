@@ -73,7 +73,7 @@ const App = observer(() => {
   })
 
   return (
-    <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-col">
+    <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-col noselect">
       <div className="flex-1/2 overflow-hidden flex flex-row">
         <div className="overflow-hidden flex-1/3">
           <Parameters state={STATE.simulation} inputs={STATE.inputs}/>

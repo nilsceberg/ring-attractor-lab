@@ -1,11 +1,12 @@
 import { observer } from "mobx-react-lite";
 import * as d3 from "d3";
 import { DT, MAX_HISTORY_DURATION, MAX_HISTORY_SAMPLES } from "./settings";
-import { act, useEffect, useRef } from "react";
+import { act, useEffect, useRef, useState } from "react";
 import { HistoryEntry } from "./Plots";
-import { preferenceAngle } from "./simulation";
+import { preferenceAngle, SimulationState } from "./simulation";
 import { EXCITE, LINES } from "./colors";
 import { PNG } from 'pngjs/browser';
+import { Label } from "./Label";
 
 interface ActivityHistoryProps {
     history: HistoryEntry[],
@@ -15,37 +16,78 @@ interface ActivityHistoryProps {
     yExtent: [number, number],
     bars?: [number, number][][],
     barStyles?: any[][],
+    state: SimulationState,
+}
+
+enum LegendType {
+    Line, Heatmap
+}
+
+interface LegendElementProps {
+    type: LegendType,
+    color: string,
+    name: string,
+    show: boolean,
+    onClick?: () => void,
+}
+
+const LegendElement = (props: LegendElementProps) => {
+
+
+    return <div className="m-3 cursor-pointer" style={{ opacity: props.show ? 1.0 : 0.3 }} onClick={_ => (props.onClick || (() => {}))()}>
+        {props.name}
+    </div>;
 }
 
 export const ActivityHistory = observer((props: ActivityHistoryProps) => {
-    const x = d3.scaleLinear().domain(props.xExtent).range([0, 750]); //[props.history[0][0], props.history[props.history.length - 1][0]]);
-    const y = d3.scaleLinear().domain(props.yExtent).range([0, -130]);
+    const x = d3.scaleLinear().domain(props.xExtent).range([0, 750]);
+    const y = d3.scaleLinear().domain(props.yExtent).range([0, -100]);
     const lines = d3.line(d => x(d[0]), d => y(d[1]));
 
-    const curves = props.curves || [];
+    const [showHeatmap, setShowHeatmap] = useState(true);
+    const [showPVA, setShowPVA] = useState(true);
+    const [showStimulusA, setShowStimulusA] = useState(true);
+    const [showStimulusB, setShowStimulusB] = useState(true);
+
+    const showCurves = [showPVA, showStimulusA, showStimulusB];
+    const curves = (props.curves || []).filter((_, i) => showCurves[i]);
+    const curveColors = (props.curveColors || []).filter((_, i) => showCurves[i]);
     const bars = props.bars || [];
 
     const xAxis = useRef(null);
     const yAxis = useRef(null);
+    const rightAxis = useRef(null);
     useEffect(() => {
         if (!xAxis.current || !yAxis.current) return;
 
         var axis = d3.axisBottom(x);
         d3.select(xAxis.current).call(axis as any);
 
-        var axis = d3.axisLeft(y);
-        d3.select(yAxis.current).call(axis as any);
-    }, [xAxis.current, yAxis.current]);
+        const ticks = [];
+        for (let i=0; i<props.state.neurons; ++i) {
+            ticks.push(preferenceAngle(props.state.neurons, i));
+        }
 
-    const num_neurons = 8; //props.history[0].activity.length;
+        var axis = d3.axisLeft(y).tickValues(ticks).tickFormat((value, index) => `${index + 1}`);
+        d3.select(yAxis.current).call(axis as any);
+
+        var axis = d3.axisRight(y).tickValues(ticks);
+        d3.select(rightAxis.current).call(axis as any).attr("transform", "translate(750, 0)");
+    }, [xAxis.current, yAxis.current, rightAxis.current]);
+
+    const num_neurons = props.state.neurons;
     let png = new PNG({
         width: MAX_HISTORY_SAMPLES,
         height: num_neurons,
     });
-    for (let i=0; i<props.history.length; ++i) {
-        const activity = props.history[i].activity;
-        for (let j=0; j < activity.length; ++j) {
-            png.data.writeUInt32BE(0x608fff00 + Math.round(activity[j] * 255), 4*(MAX_HISTORY_SAMPLES * ((num_neurons - j - 1 + 4) % num_neurons) + i))
+    const HEATMAP_COLOR = 0x6080ff;
+    if (showHeatmap) {
+        for (let i=0; i<props.history.length; ++i) {
+            const activity = props.history[props.history.length - i - 1].activity;
+            const k = MAX_HISTORY_SAMPLES - i - 1;
+            for (let j=0; j < activity.length; ++j) {
+                png.data.writeUInt32BE((HEATMAP_COLOR << 8) + Math.round(activity[j] * 255), 4*(MAX_HISTORY_SAMPLES * ((num_neurons - j - 1 + 4) % num_neurons) + k))
+            }
         }
     }
     const img = PNG.sync.write(png).toString("base64");
@@ -84,39 +126,33 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
         }
         segments.push(segment);
 
-        curveElements.push(<g key={i} stroke={props.curveColors ? props.curveColors[i] : "white"}>{ segments.map((s, j) => <path key={j} d={lines(s) as string}/>) }</g>)
+        curveElements.push(<g key={i} stroke={curveColors[i]}>{ segments.map((s, j) => <path key={j} d={lines(s) as string}/>) }</g>)
     }
 
     return (
-        <div className="relative w-full h-full">
-            {/*<canvas className="absolute w-full h-full" ref={canvas}/>*/}
-            <svg className="absolute w-full h-full" viewBox="-30 -150 800 180">
+        <div className="relative w-full h-full flex flex-col">
+            <Label>Activity over time with PVA angle</Label>
+            <svg className="absolute w-full h-full" viewBox="-30 -100 800 180">
                 <image imageRendering="pixelated" preserveAspectRatio="none" x={x(props.xExtent[0])} y={y(props.yExtent[1])} width={x(props.xExtent[1]) - x(props.xExtent[0])} height={y(props.yExtent[0]) - y(props.yExtent[1])} xlinkHref={`data:image/png;base64,${img}`}/>
                 <g ref={xAxis}/>
                 <g ref={yAxis}/>
-                <g>
-                    {
-                        bars.map((bars, i) =>
-                            <g key={i}>
-                                {
-                                    bars.map(([band, height], j) => {
-                                        const rw = 20;
-                                        const rx = x(band) - rw/2;
-                                        const ry = y(height);
-                                        const rh = Math.abs(ry);
-                                        const style = props.barStyles ? props.barStyles[i][j] : { stroke: LINES, fill: "gray", strokeWidth: 1 };
-                                        style.strokeWidth = 1;
-                                        return <rect key={j} x={rx} y={ry} width={rw} height={rh} {...style}/>;
-                                    })
-                                }
-                            </g>
-                        )
-                    }
-                </g>
+                <g ref={rightAxis}/>
                 <g fill="transparent" strokeWidth={2}>
                     { curveElements }
                 </g>
+                <text textAnchor="middle" transform="translate(-30, -55), rotate(-90)" fill={LINES} fontSize={9}>neuron #</text>
+                <text textAnchor="middle" transform="translate(790, -55), rotate(90)" fill={LINES} fontSize={9}>pref. angle</text>
+                {/*<text textAnchor="left" x={760} y={0} dy="1.75em" fill={LINES} fontSize={9}>seconds ago</text>*/}
+                <text textAnchor="left" x={360} y={20} dy="1em" fill={LINES} fontSize={9}>seconds ago</text>
             </svg>
+            <div className="absolute bottom-5 flex flex-row w-full">
+                <div className="grow"/>
+                <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="activity heatmap" show={showHeatmap} onClick={() => setShowHeatmap(!showHeatmap)}/>
+                <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="PVA angle" show={showPVA} onClick={() => setShowPVA(!showPVA)}/>
+                <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="stimulus A location" show={showStimulusA} onClick={() => setShowStimulusA(!showStimulusA)}/>
+                <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="stimulus B location" show={showStimulusB} onClick={() => setShowStimulusB(!showStimulusB)}/>
+                <div className="grow"/>
+            </div>
         </div>
     );
 });

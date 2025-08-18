@@ -91,7 +91,7 @@ export function initialState(neurons: number): SimulationState {
         value: 100,
         activity,
         time_constant: 0.1,
-        volatility: 0.10,
+        volatility: 0.010,
         paused: false,
     }
 }

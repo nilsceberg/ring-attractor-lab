@@ -23,8 +23,10 @@ interface Props {
 }
 
 export const Plots = observer((props: Props) => {
+    const now = props.state.time;
     const [min, max] = d3.extent(props.history, d => d.time) as [number, number];
-    const timeExtent: [number, number] = [min, min + MAX_HISTORY_DURATION];
+    //const timeExtent: [number, number] = [min, min + MAX_HISTORY_DURATION];
+    const timeExtent: [number, number] = [-MAX_HISTORY_DURATION, 0];
 
     const angles = d3.range(-Math.PI, Math.PI, 0.1);
     const fieldOffset = Math.PI / props.state.neurons;
@@ -42,12 +44,13 @@ export const Plots = observer((props: Props) => {
             </div>
             <div className="flex-1/2 overflow-hidden">
                 <ActivityHistory yExtent={[-Math.PI - fieldOffset, Math.PI - fieldOffset]}
+                    state={props.state}
                     xExtent={timeExtent}
                     history={props.history}
                     curves={
                         [
-                            props.history.map(d => [d.time, wrapAngle(decodeAngle(d.activity), Math.PI / props.state.neurons)] as [number, number])
-                        ].concat(STIMULI.map((_, index) => props.history.map(d => [d.time, wrapAngle(d.stimuli[index].location, fieldOffset)] as [number, number])))
+                            props.history.map(d => [d.time - now, wrapAngle(decodeAngle(d.activity), Math.PI / props.state.neurons)] as [number, number])
+                        ].concat(STIMULI.map((_, index) => props.history.map(d => [d.time - now, wrapAngle(d.stimuli[index].location, fieldOffset)] as [number, number])))
                     }
                     curveColors={["white"].concat(colors.STIMULI)}
                     />

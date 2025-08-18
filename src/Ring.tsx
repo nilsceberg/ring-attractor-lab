@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { SimulationState, Stimulus } from "./simulation";
 import { useEffect, useRef, useState } from "react";
 import { STIMULI } from "./colors";
+import { Label } from "./Label";
 
 const useSvg = (f: (element: d3.Selection<SVGSVGElement, any, any, any>) => void, deps: any[] = []) => {
   const ref = useRef<SVGSVGElement>(null);
@@ -117,35 +118,38 @@ export const Ring = observer((props: { state: SimulationState, stimuli: Stimulus
   };
 
   return (
-    <svg className="w-full h-full" viewBox="-400 -400 800 800" ref={ref}>
-      <g>
-        {arcs.map((d, i) => <path key={i} {...cellStyle(props.state.activity[i], i, highlight)} d={arc(d as any) as string} onMouseEnter={() => { if (props.setHovering) props.setHovering(i) }} onMouseLeave={() => { if (props.setHovering) props.setHovering(undefined) }}/>)}
-      </g>
-      <g>
-        {stimulusArcs}
-      </g>
-      <g>
-        {
-          props.state.weights.map((row, i) =>
-            <g key={i}>
-              {row.map((w, j) => [w, j]).filter(([w, j]) => w <= 0).map(([w, j]) =>
-                <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(j, i, w) as any}/>
-              )}
-            </g>
-          )
-        }
-      </g>
-      <g>
-        {
-          props.state.weights.map((row, i) =>
-            <g key={i}>
-              {row.map((w, j) => [w, j]).filter(([w, j]) => w > 0).map(([w, j]) =>
-                <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(j, i, w) as any}/>
-              )}
-            </g>
-          )
-        }
-      </g>
-    </svg>
+    <>
+      <Label>Population vector average</Label>
+      <svg className="w-full h-full" viewBox="-400 -400 800 800" ref={ref}>
+        <g>
+          {arcs.map((d, i) => <path key={i} {...cellStyle(props.state.activity[i], i, highlight)} d={arc(d as any) as string} onMouseEnter={() => { if (props.setHovering) props.setHovering(i) }} onMouseLeave={() => { if (props.setHovering) props.setHovering(undefined) }}/>)}
+        </g>
+        <g>
+          {stimulusArcs}
+        </g>
+        <g>
+          {
+            props.state.weights.map((row, i) =>
+              <g key={i}>
+                {row.map((w, j) => [w, j]).filter(([w, j]) => w <= 0).map(([w, j]) =>
+                  <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(j, i, w) as any}/>
+                )}
+              </g>
+            )
+          }
+        </g>
+        <g>
+          {
+            props.state.weights.map((row, i) =>
+              <g key={i}>
+                {row.map((w, j) => [w, j]).filter(([w, j]) => w > 0).map(([w, j]) =>
+                  <path key={j} fill={ribbonColor(i, w)} style={{transition: "fill 0.2s"}} d={ribbon(j, i, w) as any}/>
+                )}
+              </g>
+            )
+          }
+        </g>
+      </svg>
+    </>
   );
 });
