@@ -47,6 +47,23 @@ export function wrapAngle(theta: number, offset: number = 0): number {
     return (x + offset + 3*Math.PI) % (2 * Math.PI) - Math.PI - offset;
 }
 
+export function populationVectorAverage(activity: number[]) {
+    let vector = [0, 0];
+    let delta = 2 * Math.PI / activity.length;
+    for (let i=0; i<activity.length; ++i) {
+        vector[0] += activity[i] * Math.cos(delta * i);
+        vector[1] += activity[i] * Math.sin(delta * i);
+    }
+    vector[0] /= 2;
+    vector[1] /= 2;
+    return vector;
+}
+
+export function decodeAngle(activity: number[]) {
+    const pva = populationVectorAverage(activity);
+    return Math.atan2(pva[1], pva[0]);
+}
+
 export function createWeights(neurons: number, a: number, b: number): number[][] {
     const weights = zeros([neurons, neurons]) as number[][];
     for (let i=0; i<neurons; ++i) {

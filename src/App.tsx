@@ -10,6 +10,7 @@ import { DT, MAX_HISTORY_SAMPLES } from "./settings";
 import { Ring } from "./Ring";
 import { Matrix } from "./Matrix";
 import { useEffect } from "react";
+import { StateSpace } from "./StateSpace";
 
 const STATE = observable({
   simulation: initialState(8),
@@ -81,11 +82,16 @@ const App = observer(() => {
         </div>
         {/*<div className="overflow-hidden flex-1/4"/>*/}
         <div className="overflow-hidden flex-1/3">
-          <Ring state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
+          <StateSpace state={STATE.simulation}/>
         </div>
       </div>
-      <div className="flex-1/2 overflow-hidden">
-        <Plots state={STATE.simulation} history={STATE.history} inputs={STATE.inputs} highlight={STATE.highlight}/>
+      <div className="flex-1/2 overflow-hidden flex flex-row">
+        <div className="flex-2/3">
+          <Plots state={STATE.simulation} history={STATE.history} inputs={STATE.inputs} highlight={STATE.highlight}/>
+        </div>
+        <div className="flex-1/3">
+          <Ring state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
+        </div>
       </div>
     </div>
   );
