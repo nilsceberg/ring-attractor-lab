@@ -45,7 +45,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     for (let i=0; i<props.history.length; ++i) {
         const activity = props.history[i].activity;
         for (let j=0; j < activity.length; ++j) {
-            png.data.writeUInt32BE(0x90a0ff00 + Math.round(activity[j] * 255), 4*(MAX_HISTORY_SAMPLES * ((num_neurons - j - 1 + 4) % num_neurons) + i))
+            png.data.writeUInt32BE(0x608fff00 + Math.round(activity[j] * 255), 4*(MAX_HISTORY_SAMPLES * ((num_neurons - j - 1 + 4) % num_neurons) + i))
         }
     }
     const img = PNG.sync.write(png).toString("base64");
