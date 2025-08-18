@@ -32,21 +32,22 @@ const STATE = observable({
 
 const App = observer(() => {
   const dt = DT;
+  const stimuli: Stimulus[] = [
+    {
+      location: STATE.inputs.angleA,
+      width: STATE.inputs.widthA,
+      strength: STATE.inputs.activeA ? STATE.inputs.strengthA : 0,
+    },
+    {
+      location: STATE.inputs.angleB,
+      width: STATE.inputs.widthB,
+      strength: STATE.inputs.activeB ? STATE.inputs.strengthB : 0,
+    },
+  ];
+
   useInterval(action(() => {
     if (STATE.simulation.paused) return;
 
-    const stimuli: Stimulus[] = [
-      {
-        location: STATE.inputs.angleA,
-        width: STATE.inputs.widthA,
-        strength: STATE.inputs.activeA ? STATE.inputs.strengthA : 0,
-      },
-      {
-        location: STATE.inputs.angleB,
-        width: STATE.inputs.widthB,
-        strength: STATE.inputs.activeB ? STATE.inputs.strengthB : 0,
-      },
-    ];
     STATE.simulation = step(STATE.simulation, dt, stimuli);
 
     STATE.history.push({
@@ -78,7 +79,7 @@ const App = observer(() => {
           <Parameters state={STATE.simulation} inputs={STATE.inputs}/>
         </div>
         <div className="flex-1/3">
-          <Ring state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
+          <Ring state={STATE.simulation} stimuli={stimuli} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
         </div>
         {/*<div className="overflow-hidden flex-1/4"/>*/}
         <div className="overflow-hidden flex-1/3">

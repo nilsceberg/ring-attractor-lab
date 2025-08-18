@@ -1,7 +1,8 @@
 import * as d3 from "d3";
 import { observer } from "mobx-react-lite";
-import { SimulationState } from "./simulation";
+import { SimulationState, Stimulus } from "./simulation";
 import { useEffect, useRef, useState } from "react";
+import { STIMULI } from "./colors";
 
 const useSvg = (f: (element: d3.Selection<SVGSVGElement, any, any, any>) => void, deps: any[] = []) => {
   const ref = useRef<SVGSVGElement>(null);
@@ -48,7 +49,7 @@ export function cellStyle(a: number, i: number, highlight: number | undefined): 
   };
 }
 
-export const Ring = observer((props: { state: SimulationState, highlight: number | undefined, setHovering?: (i: number | undefined) => void }) => {
+export const Ring = observer((props: { state: SimulationState, stimuli: Stimulus[], highlight: number | undefined, setHovering?: (i: number | undefined) => void }) => {
   const highlight = props.highlight;
 
   const ref = useSvg(element => {
@@ -73,6 +74,17 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
   const arcs = pie(data);
   const arc = d3.arc().innerRadius(250).outerRadius(350).padAngle(padAngle);
 
+  const stimulusArcs = props.stimuli.map((s, index) => {
+    const path = d3.arc()({
+      innerRadius: 350 + index * 20 + 10,
+      outerRadius: 350 + index * 20 + 20,
+      startAngle: s.location - s.width / 2,
+      endAngle: s.location + s.width / 2,
+    });
+    return <path key={index} d={path as string} stroke={STIMULI[index]} fill={STIMULI[index]} fillOpacity={s.strength}/>
+  });
+
+
   const MAX_WEIGHT = 2;
   const MAX_THICKNESS = 0.05;
   const ribbon = (i: number, j: number, w: number) => {
@@ -81,7 +93,7 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
     const endLocation = 2 * Math.PI / props.state.neurons * j - inputOutputOffset;
     const width = Math.abs(w) / MAX_WEIGHT * MAX_THICKNESS;
 
-    return d3.ribbonArrow().headRadius(20).radius(200-5)({
+    return d3.ribbonArrow().headRadius(20).radius(250-5)({
       source: { startAngle: startLocation - width, endAngle: startLocation + width },
       target: { startAngle: endLocation - width, endAngle: endLocation + width },
     } as any);
@@ -108,6 +120,9 @@ export const Ring = observer((props: { state: SimulationState, highlight: number
     <svg className="w-full h-full" viewBox="-400 -400 800 800" ref={ref}>
       <g>
         {arcs.map((d, i) => <path key={i} {...cellStyle(props.state.activity[i], i, highlight)} d={arc(d as any) as string} onMouseEnter={() => { if (props.setHovering) props.setHovering(i) }} onMouseLeave={() => { if (props.setHovering) props.setHovering(undefined) }}/>)}
+      </g>
+      <g>
+        {stimulusArcs}
       </g>
       <g>
         {
