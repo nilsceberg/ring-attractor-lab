@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { SimulationState } from "./simulation";
-import { ChangeEvent, InputEventHandler, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FocusEvent, useState } from "react";
 import { action } from "mobx";
 
 
@@ -57,9 +57,11 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                                     setEditing(null);
                                 });
 
+                                const onFocus = (e: FocusEvent<HTMLInputElement>) => e.target.select();
+
                                 return (
                                     <div key={j} className="w-[50px] h-[50px] border-1 border-[#666]">
-                                        <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur}/>
+                                        <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
                                     </div>
                                     );
                                 }
