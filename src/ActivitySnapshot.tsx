@@ -13,9 +13,9 @@ interface PlotProps {
     barStyles?: any[][],
 }
 
-export const Plot = observer((props: PlotProps) => {
-    const x = d3.scaleLinear().domain(props.xExtent).range([0, 700]); //[props.history[0][0], props.history[props.history.length - 1][0]]);
-    const y = d3.scaleLinear().domain(props.yExtent).range([0, -150]);
+export const ActivitySnapshot = observer((props: PlotProps) => {
+    const x = d3.scaleLinear().domain(props.xExtent).range([0, 750]); //[props.history[0][0], props.history[props.history.length - 1][0]]);
+    const y = d3.scaleLinear().domain(props.yExtent).range([0, -130]);
     const lines = d3.line(d => x(d[0]), d => y(d[1]));
 
     const curves = props.curves || [];
@@ -34,7 +34,7 @@ export const Plot = observer((props: PlotProps) => {
     }, [xAxis.current, yAxis.current]);
 
     return (
-        <svg className="w-full h-full" viewBox="-50 -150 800 180">
+        <svg className="w-full h-full" viewBox="-30 -150 800 180">
             <g ref={xAxis}/>
             <g ref={yAxis}/>
             <g>

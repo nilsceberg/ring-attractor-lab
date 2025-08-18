@@ -18,8 +18,8 @@ interface ActivityHistoryProps {
 }
 
 export const ActivityHistory = observer((props: ActivityHistoryProps) => {
-    const x = d3.scaleLinear().domain(props.xExtent).range([0, 700]); //[props.history[0][0], props.history[props.history.length - 1][0]]);
-    const y = d3.scaleLinear().domain(props.yExtent).range([0, -150]);
+    const x = d3.scaleLinear().domain(props.xExtent).range([0, 750]); //[props.history[0][0], props.history[props.history.length - 1][0]]);
+    const y = d3.scaleLinear().domain(props.yExtent).range([0, -130]);
     const lines = d3.line(d => x(d[0]), d => y(d[1]));
 
     const curves = props.curves || [];
@@ -53,7 +53,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     return (
         <div className="relative w-full h-full">
             {/*<canvas className="absolute w-full h-full" ref={canvas}/>*/}
-            <svg className="absolute w-full h-full" viewBox="-50 -150 800 180">
+            <svg className="absolute w-full h-full" viewBox="-30 -150 800 180">
                 <image imageRendering="pixelated" preserveAspectRatio="none" x={x(props.xExtent[0])} y={y(props.yExtent[1])} width={x(props.xExtent[1]) - x(props.xExtent[0])} height={y(props.yExtent[0]) - y(props.yExtent[1])} xlinkHref={`data:image/png;base64,${img}`}/>
                 <g ref={xAxis}/>
                 <g ref={yAxis}/>
