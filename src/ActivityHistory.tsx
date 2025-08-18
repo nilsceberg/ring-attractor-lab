@@ -60,7 +60,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     useEffect(() => {
         if (!xAxis.current || !yAxis.current) return;
 
-        var axis = d3.axisBottom(x);
+        var axis = d3.axisBottom(x).tickFormat(x => (-x).toString());
         d3.select(xAxis.current).call(axis as any);
 
         const ticks = [];
