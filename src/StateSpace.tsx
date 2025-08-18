@@ -16,7 +16,7 @@ export const StateSpace = observer((props: { state: SimulationState }) => {
     const x = r * Math.cos(theta);
     const y = r * Math.sin(theta);
     const degrees = Math.round(wrapAngle(theta) / (2*Math.PI) * 360 * 10) / 10;
-    radii.push(<g>
+    radii.push(<g key={i}>
       <line x1={0} y1={0} x2={x} y2={y} stroke={GRID_COLOR}/>
       <text x={x*1.1} y={y*1.1} stroke={GRID_COLOR} dy="0.5em" textAnchor="middle">{degrees} &deg;</text>
     </g>);
