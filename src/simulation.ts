@@ -98,9 +98,10 @@ export function initialState(neurons: number): SimulationState {
 }
 
 export function sampleStimulus(stimulus: Stimulus, at: number): number {
-    if (Math.abs(wrapAngle(at - stimulus.location)) < stimulus.width / 2) {
+    const distance = Math.abs(wrapAngle(at - stimulus.location)) / (stimulus.width / 2);
+    if (distance < 1) {
         // inputStrength * Math.cos(inputAngle - delta * i));
-        return stimulus.strength;
+        return stimulus.strength * (Math.cos(distance * Math.PI) * 0.5 + 0.5);
     }
     else {
         return 0;
