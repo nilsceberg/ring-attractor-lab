@@ -32,10 +32,10 @@ interface LegendElementProps {
 }
 
 const LegendElement = (props: LegendElementProps) => {
+    const className = props.type === LegendType.Heatmap ? "h-4 mb-[-3]" : "h-1 mb-1";
 
-
-    return <div className="m-3 cursor-pointer" style={{ opacity: props.show ? 1.0 : 0.3 }} onClick={_ => (props.onClick || (() => {}))()}>
-        {props.name}
+    return <div className="m-3 text-[10pt] cursor-pointer align-middle" style={{ opacity: props.show ? 1.0 : 0.3 }} onClick={_ => (props.onClick || (() => {}))()}>
+        <div className={`inline-block w-4 ${className} mr-2`} style={{ backgroundColor: props.color }}/>{props.name}
     </div>;
 }
 
@@ -148,9 +148,9 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
             <div className="absolute bottom-5 flex flex-row w-full">
                 <div className="grow"/>
                 <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="activity heatmap" show={showHeatmap} onClick={() => setShowHeatmap(!showHeatmap)}/>
-                <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="PVA angle" show={showPVA} onClick={() => setShowPVA(!showPVA)}/>
-                <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="stimulus A location" show={showStimulusA} onClick={() => setShowStimulusA(!showStimulusA)}/>
-                <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="stimulus B location" show={showStimulusB} onClick={() => setShowStimulusB(!showStimulusB)}/>
+                <LegendElement type={LegendType.Line} color={props.curveColors![0]} name="PVA angle" show={showPVA} onClick={() => setShowPVA(!showPVA)}/>
+                <LegendElement type={LegendType.Line} color={props.curveColors![1]} name="stimulus A location" show={showStimulusA} onClick={() => setShowStimulusA(!showStimulusA)}/>
+                <LegendElement type={LegendType.Line} color={props.curveColors![2]} name="stimulus B location" show={showStimulusB} onClick={() => setShowStimulusB(!showStimulusB)}/>
                 <div className="grow"/>
             </div>
         </div>
