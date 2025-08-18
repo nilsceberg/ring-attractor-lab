@@ -50,6 +50,43 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     }
     const img = PNG.sync.write(png).toString("base64");
 
+    const curveElements = [];
+    for (const i in curves) {
+        const curve = curves[i];
+        // Split curves where they jump by more than pi.
+        const segments = [];
+        let segment: [number, number][] = [];
+        for (const point of curve) {
+            if (segment.length > 0) {
+                const last = segment[segment.length - 1];
+                const jump = Math.abs(last[1] - point[1]);
+                if (jump > Math.PI) {
+                    const mid = 0.5 * (last[0] + point[0]);
+                    if (point[1] < last[1]) {
+                        segment.push([mid, props.yExtent[1]]);
+                    }
+                    else {
+                        segment.push([mid, props.yExtent[0]]);
+                    }
+
+                    segments.push(segment);
+                    segment = [];
+
+                    if (point[1] < last[1]) {
+                        segment.push([mid, props.yExtent[0]]);
+                    }
+                    else {
+                        segment.push([mid, props.yExtent[1]]);
+                    }
+                }
+            }
+            segment.push(point);
+        }
+        segments.push(segment);
+
+        curveElements.push(<g key={i} stroke={props.curveColors ? props.curveColors[i] : "white"}>{ segments.map((s, j) => <path key={j} d={lines(s) as string}/>) }</g>)
+    }
+
     return (
         <div className="relative w-full h-full">
             {/*<canvas className="absolute w-full h-full" ref={canvas}/>*/}
@@ -76,23 +113,8 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
                         )
                     }
                 </g>
-                {/*<g>
-                    {
-                        props.history.map((entry, j) => <g key={j}>{entry.activity.map(
-                            (a, i) => {
-                                const field = 2 * Math.PI / entry.activity.length;
-                                const angle = preferenceAngle(entry.activity.length, i) + field / 2;
-                                return <rect key={i} x={x(entry.time) + 1} width={x(DT) - x(0)} y={y(angle)} height={y(0) - y(field)} strokeWidth={0} opacity={a} fill={EXCITE}/>;
-                            })}</g>
-                        )
-                    }
-                </g>*/}
-                <g>
-                    {
-                        curves.map((data, i) =>
-                            <path key={i} fill="transparent" stroke={props.curveColors ? props.curveColors[i] : "white"} strokeWidth="2" d={lines(data) as string}/>
-                        )
-                    }
+                <g fill="transparent" strokeWidth={2}>
+                    { curveElements }
                 </g>
             </svg>
         </div>

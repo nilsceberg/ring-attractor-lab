@@ -16,9 +16,7 @@ interface PlotProps {
 export const ActivitySnapshot = observer((props: PlotProps) => {
     const x = d3.scaleLinear().domain(props.xExtent).range([0, 750]); //[props.history[0][0], props.history[props.history.length - 1][0]]);
     const y = d3.scaleLinear().domain(props.yExtent).range([0, -130]);
-    const lines = d3.line(d => x(d[0]), d => y(d[1]));
 
-    const curves = props.curves || [];
     const bars = props.bars || [];
 
     const xAxis = useRef(null);
@@ -53,13 +51,6 @@ export const ActivitySnapshot = observer((props: PlotProps) => {
                                 })
                             }
                         </g>
-                    )
-                }
-            </g>
-            <g>
-                {
-                    curves.map((data, i) =>
-                        <path key={i} fill="transparent" stroke={props.curveColors ? props.curveColors[i] : "white"} strokeWidth="2" d={lines(data) as string}/>
                     )
                 }
             </g>

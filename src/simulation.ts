@@ -1,5 +1,4 @@
 import { multiply, zeros, add, subtract, dotMultiply, map } from "mathjs";
-import { computed } from "mobx";
 
 export interface SimulationState {
     time: number,
