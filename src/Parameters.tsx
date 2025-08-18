@@ -50,6 +50,9 @@ export const Parameters = observer((props: Props) => {
         props.state.weights = createWeights(props.state.neurons, props.inputs.a, props.inputs.b);
     });
 
+    const minAngle = -Math.PI - (Math.PI / props.state.neurons) + 0.01;
+    const maxAngle = Math.PI - (Math.PI / props.state.neurons);
+
     return (
         <div className="p-10 pt-4">
             {/*<button onClick={action(() => props.state.activity = randomActivity(props.state.neurons))}>Randomize activity</button>*/}
@@ -65,8 +68,8 @@ export const Parameters = observer((props: Props) => {
 
             <Divider><span style={{ color: STIMULI[0] }}>Stimulus A</span> <input type="checkbox" checked={props.inputs.activeA} onChange={action(_ => props.inputs.activeA = !props.inputs.activeA)}/></Divider>
             <Input label="Location (radians)">
-                <Numeric min={-Math.PI} max={Math.PI} value={props.inputs.angleA} onChange={action(value => props.inputs.angleA = value)}/>
-                <Slider min={-Math.PI} max={Math.PI} value={props.inputs.angleA} onChange={action(value => props.inputs.angleA = value)}/>
+                <Numeric min={minAngle} max={maxAngle} value={props.inputs.angleA} onChange={action(value => props.inputs.angleA = value)}/>
+                <Slider min={minAngle} max={maxAngle} value={props.inputs.angleA} onChange={action(value => props.inputs.angleA = value)}/>
             </Input>
             <Input label="Width (radians)">
                 <Numeric min={0} max={2*Math.PI} value={props.inputs.widthA} onChange={action(value => props.inputs.widthA = value)}/>
@@ -79,8 +82,8 @@ export const Parameters = observer((props: Props) => {
 
             <Divider><span style={{ color: STIMULI[1] }}>Stimulus B</span> <input type="checkbox" checked={props.inputs.activeB} onChange={action(_ => props.inputs.activeB = !props.inputs.activeB)}/></Divider>
             <Input label="Location (radians)">
-                <Numeric min={-Math.PI} max={Math.PI} value={props.inputs.angleB} onChange={action(value => props.inputs.angleB = value)}/>
-                <Slider min={-Math.PI} max={Math.PI} value={props.inputs.angleB} onChange={action(value => props.inputs.angleB = value)}/>
+                <Numeric min={minAngle} max={maxAngle} value={props.inputs.angleB} onChange={action(value => props.inputs.angleB = value)}/>
+                <Slider min={minAngle} max={maxAngle} value={props.inputs.angleB} onChange={action(value => props.inputs.angleB = value)}/>
             </Input>
             <Input label="Width (radians)">
                 <Numeric min={0} max={2*Math.PI} value={props.inputs.widthB} onChange={action(value => props.inputs.widthB = value)}/>
