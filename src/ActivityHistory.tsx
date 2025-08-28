@@ -7,6 +7,7 @@ import { preferenceAngle, SimulationState } from "./simulation";
 import { EXCITE, LINES } from "./colors";
 import { PNG } from 'pngjs/browser';
 import { Label } from "./Label";
+import { toDegrees } from "./util";
 
 interface ActivityHistoryProps {
     history: HistoryEntry[],
@@ -71,7 +72,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
         var axis = d3.axisLeft(y).tickValues(ticks).tickFormat((value, index) => `${index + 1}`);
         d3.select(yAxis.current).call(axis as any);
 
-        var axis = d3.axisRight(y).tickValues(ticks);
+        var axis = d3.axisRight(y).tickValues(ticks).tickFormat((value, index) => `${toDegrees(value as number).toFixed(0)}`);
         d3.select(rightAxis.current).call(axis as any).attr("transform", "translate(750, 0)");
     }, [xAxis.current, yAxis.current, rightAxis.current]);
 
@@ -141,7 +142,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
                     { curveElements }
                 </g>
                 <text textAnchor="middle" transform="translate(-30, -55), rotate(-90)" fill={LINES} fontSize={9}>neuron #</text>
-                <text textAnchor="middle" transform="translate(790, -55), rotate(90)" fill={LINES} fontSize={9}>pref. angle</text>
+                <text textAnchor="middle" transform="translate(790, -55), rotate(90)" fill={LINES} fontSize={9}>angle (degrees)</text>
                 {/*<text textAnchor="left" x={760} y={0} dy="1.75em" fill={LINES} fontSize={9}>seconds ago</text>*/}
                 <text textAnchor="left" x={360} y={20} dy="1em" fill={LINES} fontSize={9}>seconds ago</text>
             </svg>
