@@ -73,27 +73,28 @@ const App = observer(() => {
   })
 
   return (
-    <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-col noselect">
-      <div className="flex-1/2 overflow-hidden flex flex-row">
-        <div className="overflow-hidden flex-1/3">
-          <Parameters state={STATE.simulation} inputs={STATE.inputs}/>
+    <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-row noselect">
+        <div className="flex-1/3 flex flex-col">
+          <div className="flex-1/2">
+            <Parameters state={STATE.simulation} inputs={STATE.inputs}/>
+          </div>
+          <div className="flex-1/2">
+            <Matrix state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
+          </div>
         </div>
-        <div className="flex-1/3 pt-5">
-          <Ring state={STATE.simulation} stimuli={stimuli} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
+        <div className="flex-2/3 flex flex-col">
+          <div className="flex-1/2 overflow-hidden flex flex-row">
+            <div className="flex-1/2">
+              <Ring state={STATE.simulation} stimuli={stimuli} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
+            </div>
+            <div className="flex-1/2">
+              <StateSpace state={STATE.simulation}/>
+            </div>
+          </div>
+          <div className="flex-1/2">
+            <Plots state={STATE.simulation} history={STATE.history} inputs={STATE.inputs} highlight={STATE.highlight}/>
+          </div>
         </div>
-        {/*<div className="overflow-hidden flex-1/4"/>*/}
-        <div className="overflow-hidden flex-1/3 pt-5">
-          <StateSpace state={STATE.simulation}/>
-        </div>
-      </div>
-      <div className="flex-1/2 overflow-hidden flex flex-row">
-        <div className="overflow-hidden flex-1/3">
-          <Matrix state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>
-        </div>
-        <div className="flex-2/3">
-          <Plots state={STATE.simulation} history={STATE.history} inputs={STATE.inputs} highlight={STATE.highlight}/>
-        </div>
-      </div>
     </div>
   );
 });
