@@ -14,8 +14,8 @@ export const StateSpace = observer((props: { state: SimulationState }) => {
   for (let i=0; i<RADII; ++i) {
     const r = radius.range()[1];
     const theta = 2 * Math.PI / RADII * i;
-    const x = r * Math.cos(theta);
-    const y = r * Math.sin(theta);
+    const x = r * Math.sin(theta);
+    const y = -r * Math.cos(theta);
     const degrees = Math.round(wrapAngle(theta) / (2*Math.PI) * 360 * 10) / 10;
     radii.push(<g key={i}>
       <line x1={0} y1={0} x2={x} y2={y} stroke={GRID_COLOR}/>
@@ -34,7 +34,7 @@ export const StateSpace = observer((props: { state: SimulationState }) => {
           <circle cx={0} cy={0} r={radius(0.5)} fill="none" stroke={GRID_COLOR}/>
           <g>{ radii }</g>
         </g>
-        <circle cx={radius(pva[0])} cy={radius(pva[1])} r={10} fill="white"/>
+        <circle cx={radius(pva[1])} cy={-radius(pva[0])} r={10} fill="white"/>
       </svg>
     </>
   );
