@@ -35,7 +35,7 @@ export const ActivitySnapshot = observer((props: PlotProps) => {
     return (
         <div className="relative w-full h-full">
             <Label>Instantaneous activity</Label>
-            <svg className="w-full h-full" viewBox="-30 -120 800 180">
+            <svg className="w-full h-full" viewBox="-50 -120 850 180">
                 <g ref={xAxis}/>
                 <g ref={yAxis}/>
                 <g>

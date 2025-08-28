@@ -35,9 +35,9 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
     return (
         <>
             <Label>Connectivity matrix</Label>
-            <div className="w-full h-full flex flex-row items-center">
+            <div className="w-full h-full flex flex-row items-center text-sm">
                 <div className="grow"/>
-                <div className="flex flex-col border-1 border-gray-400">
+                <div className="flex flex-col border-1 border-gray-[#ccc]">
                     {
                         props.state.weights.map((row, i) => (
                             <div key={i} className="flex flex-row" onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(undefined)}>

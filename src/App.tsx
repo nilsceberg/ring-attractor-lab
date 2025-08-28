@@ -70,13 +70,18 @@ const App = observer(() => {
       }
       return true;
     };
-  })
+  });
+
+  const onSetNeuronCount = action((count: number) => {
+    STATE.history = [];
+    STATE.simulation = initialState(count);
+  });
 
   return (
-    <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-row noselect">
+    <div className="absolute left-0 right-0 top-0 bottom-0 flex flex-row noselect m-4">
         <div className="flex-1/3 flex flex-col">
           <div className="flex-1/2">
-            <Parameters state={STATE.simulation} inputs={STATE.inputs}/>
+            <Parameters state={STATE.simulation} inputs={STATE.inputs} onSetNeuronCount={onSetNeuronCount}/>
           </div>
           <div className="flex-1/2">
             <Matrix state={STATE.simulation} highlight={STATE.highlight} setHovering={action(i => STATE.highlight = i)}/>

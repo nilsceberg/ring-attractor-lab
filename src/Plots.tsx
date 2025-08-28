@@ -34,7 +34,7 @@ export const Plots = observer((props: Props) => {
     const STIMULI = [0, 1];
 
     return (
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col w-full h-full p-4">
             <div className="flex-1/2 overflow-hidden">
                 <ActivitySnapshot yExtent={[0, 1]}
                     xExtent={[-1, props.state.neurons]}

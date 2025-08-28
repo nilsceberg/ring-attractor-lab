@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { createWeights, randomActivity, SimulationState } from "./simulation";
+import { createWeights, initialState, randomActivity, SimulationState } from "./simulation";
 import { ChangeEvent, FocusEvent, PropsWithChildren, useState } from "react";
 import { action } from "mobx";
 import { Pause, PlayArrow } from "@mui/icons-material";
@@ -36,8 +36,9 @@ const Numeric = (props: { value: number, min: number, max: number, onChange: (va
     return <input className="basis-0 w-0 grow-[0.8] pl-1" type="text" value={value} onChange={onChange} onBlur={onBlur} max={props.max.toPrecision(3)} min={props.min.toPrecision(3)} />;
 }
 
-const Slider = (props: { value: number, min: number, max: number, onChange: (value: any) => void }) => {
-    return <input className="basis-0 grow-[3]" type="range" value={props.value} onChange={e => props.onChange(parseFloat(e.target.value) || 0)} max={props.max} min={props.min} step={(props.max - props.min) / 1000}/>;
+const Slider = (props: { value: number, min: number, max: number, step?: number, onChange: (value: any) => void }) => {
+    const step = props.step || (props.max - props.min) / 1000;
+    return <input className="basis-0 grow-[3]" type="range" value={props.value} onChange={e => props.onChange(parseFloat(e.target.value) || 0)} max={props.max} min={props.min} step={step}/>;
 }
 
 const Divider = (props: PropsWithChildren<{}>) => {
@@ -81,6 +82,7 @@ export interface InputParameters {
 interface Props {
     state: SimulationState,
     inputs: InputParameters,
+    onSetNeuronCount: (count: number) => void,
 }
 
 export const Parameters = observer((props: Props) => {
@@ -89,14 +91,14 @@ export const Parameters = observer((props: Props) => {
         props.state.weights = createWeights(props.state.neurons, props.inputs.a, props.inputs.b);
     });
 
-    const minAngle = -179;
-    const maxAngle = 180;
+    const minAngle = -359;
+    const maxAngle = 360;
 
     const MAX_STRENGTH = 5.0;
     const MAX_WIDTH = 180;
 
     return (
-        <div className="p-10 pt-10">
+        <div className="pl-10">
             {/*<button onClick={action(() => props.state.activity = randomActivity(props.state.neurons))}>Randomize activity</button>*/}
             {/*<Divider>Simulation</Divider>*/}
             {/*<Input label="Neuronal time constant">
@@ -154,8 +156,6 @@ export const Parameters = observer((props: Props) => {
                 </Input>
             </Row>
 
-            <Divider/>
-            <div className="w-full text-center">{props.state.paused ? <Pause fontSize="large"/> : <PlayArrow fontSize="large"/>} {props.state.time.toFixed(2)} s</div>
 
             {/*<Divider>Connectivity</Divider>
             <Input label="a">
@@ -166,6 +166,18 @@ export const Parameters = observer((props: Props) => {
                 <Numeric min={-1} max={1} value={props.inputs.b} onChange={weightAction(value => {console.log(value); props.inputs.b = value})}/>
                 <Slider min={-1} max={1} value={props.inputs.b} onChange={weightAction(value => props.inputs.b = value)}/>
             </Input>*/}
+
+            <Divider>Network</Divider>
+            <div className="w-full text-center">{props.state.paused ? <Pause fontSize="large"/> : <PlayArrow fontSize="large"/>} {props.state.time.toFixed(2)} s</div>
+
+            <Row>
+                <Input label="Duplicate first row" className="grow">
+                    <Toggle enabled={false}/>
+                </Input>
+                <Input label="Neuron count" className="grow">
+                    <Slider min={4} max={16} step={2} value={props.state.neurons} onChange={value => props.onSetNeuronCount(value)}/>
+                </Input>
+            </Row>
         </div>
     )
 });

@@ -133,7 +133,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     return (
         <div className="relative w-full h-full flex flex-col">
             <Label>Activity over time with PVA angle</Label>
-            <svg className="absolute w-full h-full" viewBox="-30 -100 800 180">
+            <svg className="absolute w-full h-full" viewBox="-50 -100 850 180">
                 <image imageRendering="pixelated" preserveAspectRatio="none" x={x(props.xExtent[0])} y={y(props.yExtent[1])} width={x(props.xExtent[1]) - x(props.xExtent[0])} height={y(props.yExtent[0]) - y(props.yExtent[1])} xlinkHref={`data:image/png;base64,${img}`}/>
                 <g ref={xAxis}/>
                 <g ref={yAxis}/>
@@ -146,7 +146,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
                 {/*<text textAnchor="left" x={760} y={0} dy="1.75em" fill={LINES} fontSize={9}>seconds ago</text>*/}
                 <text textAnchor="left" x={360} y={20} dy="1em" fill={LINES} fontSize={9}>seconds ago</text>
             </svg>
-            <div className="absolute bottom-5 flex flex-row w-full">
+            <div className="absolute bottom-0 flex flex-row w-full">
                 <div className="grow"/>
                 <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="activity heatmap" show={showHeatmap} onClick={() => setShowHeatmap(!showHeatmap)}/>
                 <LegendElement type={LegendType.Line} color={props.curveColors![0]} name="PVA angle" show={showPVA} onClick={() => setShowPVA(!showPVA)}/>
