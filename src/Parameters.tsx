@@ -7,7 +7,7 @@ import { STIMULI } from "./colors";
 import { toDegrees, toRadians } from "./util";
 import { Matrix } from "./Matrix";
 
-const Input = (props: PropsWithChildren<{ label: string, className?: string}>) => {
+export const Input = (props: PropsWithChildren<{ label: string, className?: string}>) => {
     return <div className={`flex flex-col m-1 w-full ${props.className || ""}`}>
         <div className="grow-0 whitespace-nowrap overflow-hidden overflow-ellipsis text-left content-center pr-4 text-xs">{props.label}: </div>
         <div className="basis-0 grow-1 flex flex-row h-[25px] text-sm">
@@ -35,7 +35,7 @@ const Numeric = (props: { value: number, min: number, max: number, precision?: n
         }
     };
 
-    return <input className="basis-0 w-0 grow-[0.8] pl-1" type="text" value={value} onChange={onChange} onBlur={onBlur} max={props.max.toPrecision(3)} min={props.min.toPrecision(3)} />;
+    return <input className="basis-0 w-[100px] pl-1" type="text" value={value} onChange={onChange} onBlur={onBlur} max={props.max.toPrecision(3)} min={props.min.toPrecision(3)} />;
 }
 
 const Slider = (props: { value: number, min: number, max: number, step?: number, onChange: (value: any) => void }) => {
@@ -47,7 +47,7 @@ const Divider = (props: PropsWithChildren<{}>) => {
     return <div className="w-full ml-auto mr-auto text-center border-b-1 border-[#777] text-[#ccc] mb-2 mt-3">{props.children}</div>
 }
 
-const Toggle = (props: { enabled: boolean, onChange?: (enabled: boolean) => void }) => {
+export const Toggle = (props: { enabled: boolean, onChange?: (enabled: boolean) => void }) => {
     const onChange = props.onChange || (_ => {});
 
     const position = props.enabled ? "left-[50%] right-0.5" : "left-0.5 right-[50%]";
@@ -119,12 +119,12 @@ export const Parameters = observer((props: Props) => {
 
             <Divider><span style={{ color: STIMULI[0] }}>Stimulus A</span></Divider>
             <Row>
-                <Input label="Enable" className="basis-0">
-                    <Toggle enabled={props.inputs.activeA} onChange={action(enabled => props.inputs.activeA = enabled)}/>
-                </Input>
                 <Input label="Location (degrees)">
                     <Numeric min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleA)} onChange={action(value => props.inputs.angleA = toRadians(value))}/>
                     <Slider min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleA)} onChange={action(value => props.inputs.angleA = toRadians(value))}/>
+                </Input>
+                <Input label="Enable" className="basis-0">
+                    <Toggle enabled={props.inputs.activeA} onChange={action(enabled => props.inputs.activeA = enabled)}/>
                 </Input>
             </Row>
             <Row>
@@ -142,12 +142,12 @@ export const Parameters = observer((props: Props) => {
 
             <Divider><span style={{ color: STIMULI[1] }}>Stimulus B</span></Divider>
             <Row>
-                <Input label="Enable" className="basis-0">
-                    <Toggle enabled={props.inputs.activeB} onChange={action(enabled => props.inputs.activeB = enabled)}/>
-                </Input>
                 <Input label="Location (degrees)">
                     <Numeric min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleB)} onChange={action(value => props.inputs.angleB = toRadians(value))}/>
                     <Slider min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleB)} onChange={action(value => props.inputs.angleB = toRadians(value))}/>
+                </Input>
+                <Input label="Enable" className="basis-0">
+                    <Toggle enabled={props.inputs.activeB} onChange={action(enabled => props.inputs.activeB = enabled)}/>
                 </Input>
             </Row>
             <Row>
@@ -175,15 +175,12 @@ export const Parameters = observer((props: Props) => {
             </Input>*/}
 
             <Divider>Network</Divider>
-            <div className="w-full text-center">{props.state.paused ? <Pause fontSize="large"/> : <PlayArrow fontSize="large"/>} {props.state.time.toFixed(2)} s</div>
 
             <Row>
-                <Input label="Duplicate first row" className="grow">
-                    <Toggle enabled={false}/>
-                </Input>
                 <Input label="Neuron count" className="grow">
                     <Numeric min={4} max={16} value={props.state.neurons} precision={0} onChange={value => { if (value <= 16 && value >= 4 && value % 2 === 0) props.onSetNeuronCount(value); }}/>
                     <Slider min={4} max={16} step={2} value={props.state.neurons} onChange={value => props.onSetNeuronCount(value)}/>
+                    <div className="h-full grow text-right mt-[-6px]">{props.state.paused ? <Pause fontSize="large"/> : <PlayArrow fontSize="large"/>} {props.state.time.toFixed(2)} s</div>
                 </Input>
             </Row>
           </div>

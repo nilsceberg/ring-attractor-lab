@@ -1,8 +1,18 @@
 import { observer } from "mobx-react-lite";
 import { SimulationState } from "./simulation";
-import { ChangeEvent, FocusEvent, useState } from "react";
+import { ChangeEvent, FocusEvent, PropsWithChildren, useState } from "react";
 import { action } from "mobx";
 import { Label } from "./Label";
+import { Toggle } from "./Parameters";
+
+export const Input = (props: PropsWithChildren<{ label: string, className?: string}>) => {
+    return <div className={`mt-4 flex flex-row m-1 justify-center ${props.className || ""}`}>
+        <div className="grow-0 whitespace-nowrap overflow-hidden overflow-ellipsis text-left content-center pr-4 text-xs">{props.label}: </div>
+        <div className="basis-0 grow-0 flex flex-row h-[25px] text-sm">
+            {props.children}
+        </div>
+    </div>;
+};
 
 
 const MAX_WEIGHT = 2.0;
@@ -43,41 +53,48 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
             <Label>Connectivity matrix</Label>
             <div className="w-full h-full flex flex-row items-center">
                 <div className="grow"/>
-                <div className="flex flex-col border-1 border-gray-[#ccc]">
-                    {
-                        props.state.weights.map((row, i) => (
-                            <div key={i} className="flex flex-row" onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(undefined)}>
-                                { row.map((w, j) => {
-                                    const isBeingEdited = editing !== null && editing[0] === i && editing[1] === j;
-                                    const inputValue = isBeingEdited ? value : w.toFixed(2);
+                <div className="flex flex-col">
+                    <div className="flex flex-col border-1 border-gray-[#ccc]">
+                        {
+                            props.state.weights.map((row, i) => (
+                                <div key={i} className="flex flex-row" onMouseEnter={() => setHovering(i)} onMouseLeave={() => setHovering(undefined)}>
+                                    { row.map((w, j) => {
+                                        const isBeingEdited = editing !== null && editing[0] === i && editing[1] === j;
+                                        const inputValue = isBeingEdited ? value : w.toFixed(2);
 
-                                    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-                                        setEditing([i, j]);
-                                        setValue(event.target.value);
-                                    };
+                                        const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+                                            setEditing([i, j]);
+                                            setValue(event.target.value);
+                                        };
 
-                                    const onBlur = action(() => {
-                                        if (isBeingEdited) {
-                                            const finalValue = Number.parseFloat(inputValue);
-                                            if (!Number.isNaN(finalValue)) {
-                                                props.state.weights[i][j] = finalValue;
+                                        const onBlur = action(() => {
+                                            if (isBeingEdited) {
+                                                const finalValue = Number.parseFloat(inputValue);
+                                                if (!Number.isNaN(finalValue)) {
+                                                    props.state.weights[i][j] = finalValue;
+                                                }
                                             }
+                                            setEditing(null);
+                                        });
+
+                                        const onFocus = (e: FocusEvent<HTMLInputElement>) => e.target.select();
+
+                                        return (
+                                            <div key={j} className="border-1 border-[#666]" style={style}>
+                                                <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
+                                            </div>
+                                            );
                                         }
-                                        setEditing(null);
-                                    });
-
-                                    const onFocus = (e: FocusEvent<HTMLInputElement>) => e.target.select();
-
-                                    return (
-                                        <div key={j} className="border-1 border-[#666]" style={style}>
-                                            <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
-                                        </div>
-                                        );
-                                    }
-                                ) }
-                            </div>
-                        ))
-                    }
+                                    ) }
+                                </div>
+                            ))
+                        }
+                    </div>
+                    <div>
+                        <Input label="Duplicate first row" className="grow">
+                            <Toggle enabled={false}/>
+                        </Input>
+                    </div>
                 </div>
                 <div className="grow"/>
             </div>
