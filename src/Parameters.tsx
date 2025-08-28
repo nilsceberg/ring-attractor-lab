@@ -5,7 +5,6 @@ import { action } from "mobx";
 import { Pause, PlayArrow } from "@mui/icons-material";
 import { STIMULI } from "./colors";
 import { toDegrees, toRadians } from "./util";
-import { a } from "react-spring";
 
 const Input = (props: PropsWithChildren<{ label: string }>) => {
     return <div className="flex flex-col m-2 w-full">
@@ -107,11 +106,11 @@ export const Parameters = observer((props: Props) => {
             <Input label="Enable">
                 <Toggle enabled={props.inputs.activeA} onChange={action(enabled => props.inputs.activeA = enabled)}/>
             </Input>
-            <Input label="Location (radians)">
+            <Input label="Location (degrees)">
                 <Numeric min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleA)} onChange={action(value => props.inputs.angleA = toRadians(value))}/>
                 <Slider min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleA)} onChange={action(value => props.inputs.angleA = toRadians(value))}/>
             </Input>
-            <Input label="Width (radians)">
+            <Input label="Width (degrees)">
                 <Numeric min={0} max={MAX_WIDTH} value={toDegrees(props.inputs.widthA)} onChange={action(value => props.inputs.widthA = toRadians(value))}/>
                 <Slider min={0} max={MAX_WIDTH} value={toDegrees(props.inputs.widthA)} onChange={action(value => props.inputs.widthA = toRadians(value))}/>
             </Input>
@@ -124,11 +123,11 @@ export const Parameters = observer((props: Props) => {
             <Input label="Enable">
                 <Toggle enabled={props.inputs.activeB} onChange={action(enabled => props.inputs.activeB = enabled)}/>
             </Input>
-            <Input label="Location (radians)">
+            <Input label="Location (degrees)">
                 <Numeric min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleB)} onChange={action(value => props.inputs.angleB = toRadians(value))}/>
                 <Slider min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleB)} onChange={action(value => props.inputs.angleB = toRadians(value))}/>
             </Input>
-            <Input label="Width (radians)">
+            <Input label="Width (degrees)">
                 <Numeric min={0} max={MAX_WIDTH} value={toDegrees(props.inputs.widthB)} onChange={action(value => props.inputs.widthB = toRadians(value))}/>
                 <Slider min={0} max={MAX_WIDTH} value={toDegrees(props.inputs.widthB)} onChange={action(value => props.inputs.widthB = toRadians(value))}/>
             </Input>
