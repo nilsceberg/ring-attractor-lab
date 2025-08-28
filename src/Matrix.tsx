@@ -16,13 +16,17 @@ export const Input = (props: PropsWithChildren<{ label: string, className?: stri
 
 
 const MAX_WEIGHT = 2.0;
-const colorMap = (i: number, w: number, highlight: number | undefined) => {
+const colorMap = (i: number, w: number, highlight: number | undefined, duplicateFirstRow: boolean) => {
     let opacity = Math.abs(w) / MAX_WEIGHT * 0.8 + 0.2;
     if (highlight !== undefined && highlight !== i) {
         //opacity = Math.max(0.1, opacity - 0.1);
     }
     if (highlight === i) {
         opacity = 1.0;
+    }
+
+    if (duplicateFirstRow && i !== 0) {
+        opacity = opacity * 0.4 + 0.1;
     }
 
     if (w == 0.0) {
@@ -41,6 +45,8 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
 
     const [editing, setEditing] = useState<[number, number] | null>(null);
     const [value, setValue] = useState("");
+
+    const [duplicateFirstRow, setDuplicateFirstRow] = useState(false);
 
     const style = {
         "font-size": 100 / props.state.neurons,
@@ -72,6 +78,12 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                                                 const finalValue = Number.parseFloat(inputValue);
                                                 if (!Number.isNaN(finalValue)) {
                                                     props.state.weights[i][j] = finalValue;
+
+                                                    if (duplicateFirstRow && i === 0) {
+                                                        for (let k = 1; k < props.state.neurons; ++k) {
+                                                            props.state.weights[k][(j + k) % props.state.neurons] = finalValue;
+                                                        }
+                                                    }
                                                 }
                                             }
                                             setEditing(null);
@@ -81,7 +93,7 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
 
                                         return (
                                             <div key={j} className="border-1 border-[#666]" style={style}>
-                                                <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
+                                                <input disabled={duplicateFirstRow && i !== 0} className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight, duplicateFirstRow), color: duplicateFirstRow && i !== 0 ? "#555" : "" /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
                                             </div>
                                             );
                                         }
@@ -92,7 +104,16 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                     </div>
                     <div>
                         <Input label="Duplicate first row" className="grow">
-                            <Toggle enabled={false}/>
+                            <Toggle enabled={duplicateFirstRow} onChange={value => {
+                                setDuplicateFirstRow(value);
+                                if (value) action(() => {
+                                    for (let j = 0; j < props.state.neurons; ++j) {
+                                        for (let k = 1; k < props.state.neurons; ++k) {
+                                            props.state.weights[k][(j + k) % props.state.neurons] = props.state.weights[0][j];
+                                        }
+                                    }
+                                })();
+                            }}/>
                         </Input>
                     </div>
                 </div>
