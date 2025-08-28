@@ -5,6 +5,7 @@ import { action } from "mobx";
 import { Pause, PlayArrow } from "@mui/icons-material";
 import { STIMULI } from "./colors";
 import { toDegrees, toRadians } from "./util";
+import { Matrix } from "./Matrix";
 
 const Input = (props: PropsWithChildren<{ label: string, className?: string}>) => {
     return <div className={`flex flex-col m-1 w-full ${props.className || ""}`}>
@@ -15,9 +16,10 @@ const Input = (props: PropsWithChildren<{ label: string, className?: string}>) =
     </div>;
 };
 
-const Numeric = (props: { value: number, min: number, max: number, onChange: (value: any) => void }) => {
+const Numeric = (props: { value: number, min: number, max: number, precision?: number, onChange: (value: any) => void }) => {
     const [intermediate, setIntermediate] = useState<string | null>(null);
-    const value = intermediate === null ? props.value.toPrecision(3) : intermediate;
+    const precision = props.precision === undefined ? 2 : props.precision;
+    const value = intermediate === null ? props.value.toFixed(precision) : intermediate;
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
         setIntermediate(event.target.value);
@@ -82,7 +84,9 @@ export interface InputParameters {
 interface Props {
     state: SimulationState,
     inputs: InputParameters,
+    highlight: number | undefined,
     onSetNeuronCount: (count: number) => void,
+    setHovering?: (i: number | undefined) => void,
 }
 
 export const Parameters = observer((props: Props) => {
@@ -97,8 +101,11 @@ export const Parameters = observer((props: Props) => {
     const MAX_STRENGTH = 5.0;
     const MAX_WIDTH = 180;
 
+
+
     return (
-        <div className="pl-10">
+        <>
+          <div className="flex-1/2 pl-10">
             {/*<button onClick={action(() => props.state.activity = randomActivity(props.state.neurons))}>Randomize activity</button>*/}
             {/*<Divider>Simulation</Divider>*/}
             {/*<Input label="Neuronal time constant">
@@ -175,9 +182,14 @@ export const Parameters = observer((props: Props) => {
                     <Toggle enabled={false}/>
                 </Input>
                 <Input label="Neuron count" className="grow">
+                    <Numeric min={4} max={16} value={props.state.neurons} precision={0} onChange={value => { if (value <= 16 && value >= 4 && value % 2 === 0) props.onSetNeuronCount(value); }}/>
                     <Slider min={4} max={16} step={2} value={props.state.neurons} onChange={value => props.onSetNeuronCount(value)}/>
                 </Input>
             </Row>
-        </div>
+          </div>
+          <div className="flex-1/2 overflow-hidden">
+            <Matrix state={props.state} highlight={props.highlight} setHovering={props.setHovering}/>
+          </div>
+        </>
     )
 });

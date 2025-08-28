@@ -32,10 +32,16 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
     const [editing, setEditing] = useState<[number, number] | null>(null);
     const [value, setValue] = useState("");
 
+    const style = {
+        "font-size": 100 / props.state.neurons,
+        "width": 380 / props.state.neurons,
+        "height": 380 / props.state.neurons,
+    };
+
     return (
         <>
             <Label>Connectivity matrix</Label>
-            <div className="w-full h-full flex flex-row items-center text-sm">
+            <div className="w-full h-full flex flex-row items-center">
                 <div className="grow"/>
                 <div className="flex flex-col border-1 border-gray-[#ccc]">
                     {
@@ -63,7 +69,7 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                                     const onFocus = (e: FocusEvent<HTMLInputElement>) => e.target.select();
 
                                     return (
-                                        <div key={j} className="w-[40px] h-[40px] border-1 border-[#666]">
+                                        <div key={j} className="border-1 border-[#666]" style={style}>
                                             <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
                                         </div>
                                         );
