@@ -5,6 +5,7 @@ import { action } from "mobx";
 import { Pause, PlayArrow } from "@mui/icons-material";
 import { STIMULI } from "./colors";
 import { toDegrees, toRadians } from "./util";
+import { a } from "react-spring";
 
 const Input = (props: PropsWithChildren<{ label: string }>) => {
     return <div className="flex flex-col m-2 w-full">
@@ -42,6 +43,21 @@ const Slider = (props: { value: number, min: number, max: number, onChange: (val
 
 const Divider = (props: PropsWithChildren<{}>) => {
     return <div className="w-full ml-auto mr-auto text-center border-b-1 border-[#777] text-[#ccc] mb-2 mt-3">{props.children}</div>
+}
+
+const Toggle = (props: { enabled: boolean, onChange?: (enabled: boolean) => void }) => {
+    const onChange = props.onChange || (_ => {});
+
+    const position = props.enabled ? "left-[50%] right-0.5" : "left-0.5 right-[50%]";
+    const background = props.enabled ? "bg-[#1f7721]" : "bg-[#891c1c]";
+
+    return (
+        <div className={`h-full w-20 border-1 border-[#ccc] flex flex-row relative cursor-pointer group ${background} transition-colors text-sm`} onClick={() => onChange(!props.enabled)}>
+            <div className="basis-0 grow-1 b-r-1 text-center content-center">ON</div>
+            <div className="basis-0 grow-1 b-r-1 text-center content-center">OFF</div>
+            <div className={`absolute top-0.5 bottom-0.5 border-1 border-[#ccc] bg-[#555] group-hover:bg-[#777] ${position} transition-[left,right]`}/>
+        </div>
+    );
 }
 
 export interface InputParameters {
@@ -87,7 +103,10 @@ export const Parameters = observer((props: Props) => {
                 <Slider min={-2} max={1} value={Math.log10(props.state.volatility)} onChange={action(value => props.state.volatility = Math.pow(10, value))}/>
             </Input>*/}
 
-            <Divider><span style={{ color: STIMULI[0] }}>Stimulus A</span> <input type="checkbox" checked={props.inputs.activeA} onChange={action(_ => props.inputs.activeA = !props.inputs.activeA)}/></Divider>
+            <Divider><span style={{ color: STIMULI[0] }}>Stimulus A</span></Divider>
+            <Input label="Enable">
+                <Toggle enabled={props.inputs.activeA} onChange={action(enabled => props.inputs.activeA = enabled)}/>
+            </Input>
             <Input label="Location (radians)">
                 <Numeric min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleA)} onChange={action(value => props.inputs.angleA = toRadians(value))}/>
                 <Slider min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleA)} onChange={action(value => props.inputs.angleA = toRadians(value))}/>
@@ -101,7 +120,10 @@ export const Parameters = observer((props: Props) => {
                 <Slider min={0} max={MAX_STRENGTH} value={props.inputs.strengthA} onChange={action(value => props.inputs.strengthA = value)}/>
             </Input>
 
-            <Divider><span style={{ color: STIMULI[1] }}>Stimulus B</span> <input type="checkbox" checked={props.inputs.activeB} onChange={action(_ => props.inputs.activeB = !props.inputs.activeB)}/></Divider>
+            <Divider><span style={{ color: STIMULI[1] }}>Stimulus B</span></Divider>
+            <Input label="Enable">
+                <Toggle enabled={props.inputs.activeB} onChange={action(enabled => props.inputs.activeB = enabled)}/>
+            </Input>
             <Input label="Location (radians)">
                 <Numeric min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleB)} onChange={action(value => props.inputs.angleB = toRadians(value))}/>
                 <Slider min={minAngle} max={maxAngle} value={toDegrees(props.inputs.angleB)} onChange={action(value => props.inputs.angleB = toRadians(value))}/>
