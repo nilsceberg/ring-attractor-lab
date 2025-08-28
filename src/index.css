@@ -27,6 +27,13 @@ input[type="number"] {
   height: 100%;
 }
 
+input[type="text"] {
+  border: 1px solid #ccc;
+  border-right: none;
+  outline: none;
+  height: 100%;
+}
+
 input[type="range"] {
   border: 1px solid #ccc;
 

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { createWeights, randomActivity, SimulationState } from "./simulation";
-import { PropsWithChildren } from "react";
+import { ChangeEvent, FocusEvent, PropsWithChildren, useState } from "react";
 import { action } from "mobx";
 import { Pause, PlayArrow } from "@mui/icons-material";
 import { STIMULI } from "./colors";
@@ -15,11 +15,28 @@ const Input = (props: PropsWithChildren<{ label: string }>) => {
 };
 
 const Numeric = (props: { value: number, min: number, max: number, onChange: (value: any) => void }) => {
-    return <input className="basis-0 grow-[0.8] pl-1" type="number" value={props.value.toPrecision(3)} onChange={e => props.onChange(parseFloat(e.target.value) || 0)} max={props.max.toPrecision(3)} min={props.min.toPrecision(3)} />;
+    const [intermediate, setIntermediate] = useState<string | null>(null);
+    const value = intermediate === null ? props.value.toPrecision(3) : intermediate;
+
+    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setIntermediate(event.target.value);
+    };
+
+    const onBlur = (_event: FocusEvent<HTMLInputElement>) => {
+        if (intermediate !== null) {
+            const value = parseFloat(intermediate);
+            if (!Number.isNaN(value)) {
+                props.onChange(value);
+            }
+            setIntermediate(null);
+        }
+    };
+
+    return <input className="basis-0 w-0 grow-[0.8] pl-1" type="text" value={value} onChange={onChange} onBlur={onBlur} max={props.max.toPrecision(3)} min={props.min.toPrecision(3)} />;
 }
 
 const Slider = (props: { value: number, min: number, max: number, onChange: (value: any) => void }) => {
-    return <input className="basis-0 grow-[3]" type="range" value={props.value} onChange={e => props.onChange(parseFloat(e.target.value) || 0)} max={props.max} min={props.min} step={(props.max - props.min) / 100}/>;
+    return <input className="basis-0 grow-[3]" type="range" value={props.value} onChange={e => props.onChange(parseFloat(e.target.value) || 0)} max={props.max} min={props.min} step={(props.max - props.min) / 360}/>;
 }
 
 const Divider = (props: PropsWithChildren<{}>) => {
