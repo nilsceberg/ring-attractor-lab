@@ -53,6 +53,8 @@ export const Parameters = observer((props: Props) => {
     const minAngle = -Math.PI - (Math.PI / props.state.neurons) + 0.01;
     const maxAngle = Math.PI - (Math.PI / props.state.neurons);
 
+    const MAX_STRENGTH = 5.0;
+
     return (
         <div className="p-10 pt-10">
             {/*<button onClick={action(() => props.state.activity = randomActivity(props.state.neurons))}>Randomize activity</button>*/}
@@ -76,8 +78,8 @@ export const Parameters = observer((props: Props) => {
                 <Slider min={0} max={2*Math.PI} value={props.inputs.widthA} onChange={action(value => props.inputs.widthA = value)}/>
             </Input>
             <Input label="Strength">
-                <Numeric min={0} max={1} value={props.inputs.strengthA} onChange={action(value => props.inputs.strengthA = value)}/>
-                <Slider min={0} max={1} value={props.inputs.strengthA} onChange={action(value => props.inputs.strengthA = value)}/>
+                <Numeric min={0} max={MAX_STRENGTH} value={props.inputs.strengthA} onChange={action(value => props.inputs.strengthA = value)}/>
+                <Slider min={0} max={MAX_STRENGTH} value={props.inputs.strengthA} onChange={action(value => props.inputs.strengthA = value)}/>
             </Input>
 
             <Divider><span style={{ color: STIMULI[1] }}>Stimulus B</span> <input type="checkbox" checked={props.inputs.activeB} onChange={action(_ => props.inputs.activeB = !props.inputs.activeB)}/></Divider>
@@ -90,8 +92,8 @@ export const Parameters = observer((props: Props) => {
                 <Slider min={0} max={2*Math.PI} value={props.inputs.widthB} onChange={action(value => props.inputs.widthB = value)}/>
             </Input>
             <Input label="Strength">
-                <Numeric min={0} max={1} value={props.inputs.strengthB} onChange={action(value => props.inputs.strengthB = value)}/>
-                <Slider min={0} max={1} value={props.inputs.strengthB} onChange={action(value => props.inputs.strengthB = value)}/>
+                <Numeric min={0} max={MAX_STRENGTH} value={props.inputs.strengthB} onChange={action(value => props.inputs.strengthB = value)}/>
+                <Slider min={0} max={MAX_STRENGTH} value={props.inputs.strengthB} onChange={action(value => props.inputs.strengthB = value)}/>
             </Input>
 
             <Divider/>

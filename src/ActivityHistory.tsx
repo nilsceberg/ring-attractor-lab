@@ -86,7 +86,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
             const activity = props.history[props.history.length - i - 1].activity;
             const k = MAX_HISTORY_SAMPLES - i - 1;
             for (let j=0; j < activity.length; ++j) {
-                png.data.writeUInt32BE((HEATMAP_COLOR << 8) + Math.round(activity[j] * 255), 4*(MAX_HISTORY_SAMPLES * ((num_neurons - j - 1 + 4) % num_neurons) + k))
+                png.data.writeUInt32BE((HEATMAP_COLOR << 8) + Math.round(activity[j] * 255), 4*(MAX_HISTORY_SAMPLES * ((num_neurons - j - 1 + num_neurons / 2) % num_neurons) + k))
             }
         }
     }

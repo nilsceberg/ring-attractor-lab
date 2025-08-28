@@ -63,7 +63,7 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                                     const onFocus = (e: FocusEvent<HTMLInputElement>) => e.target.select();
 
                                     return (
-                                        <div key={j} className="w-[50px] h-[50px] border-1 border-[#666]">
+                                        <div key={j} className="w-[40px] h-[40px] border-1 border-[#666]">
                                             <input className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight) /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
                                         </div>
                                         );
