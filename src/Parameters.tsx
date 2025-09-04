@@ -62,6 +62,14 @@ export const Toggle = (props: { enabled: boolean, onChange?: (enabled: boolean) 
     );
 }
 
+export const Button = (props: { label: string, onClick?: () => void }) => {
+    const onClick = props.onClick || (() => {});
+
+    return (
+        <button className="h-[25px] w-20 border-1 border-[#ccc] text-sm bg-[#555] hover:bg-[#777] cursor-pointer" onClick={onClick}>{ props.label }</button>
+    );
+}
+
 const Row = (props: PropsWithChildren<{ }>) => {
     return (
         <div className="flex flex-row">{ props.children }</div>

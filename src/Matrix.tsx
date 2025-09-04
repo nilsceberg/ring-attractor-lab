@@ -3,11 +3,11 @@ import { SimulationState } from "./simulation";
 import { ChangeEvent, FocusEvent, PropsWithChildren, useState } from "react";
 import { action } from "mobx";
 import { Label } from "./Label";
-import { Toggle } from "./Parameters";
+import { Button, Toggle } from "./Parameters";
 
 export const Input = (props: PropsWithChildren<{ label: string, className?: string}>) => {
     return <div className={`mt-4 flex flex-row m-1 justify-center ${props.className || ""}`}>
-        <div className="grow-0 whitespace-nowrap overflow-hidden overflow-ellipsis text-left content-center pr-4 text-xs">{props.label}: </div>
+        <div className="grow-0 whitespace-nowrap overflow-hidden overflow-ellipsis text-left content-center pr-4 text-xs">{props.label}{props.label ? ":" : ""} </div>
         <div className="basis-0 grow-0 flex flex-row h-[25px] text-sm">
             {props.children}
         </div>
@@ -102,8 +102,20 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                             ))
                         }
                     </div>
-                    <div>
-                        <Input label="Duplicate first row" className="grow">
+                    <div className="flex flex-row">
+                        <div className="mt-4 flex flex-row m-1 justify-center">
+                            <Button label="Reset" onClick={action(() => {
+                                if (confirm("Are you sure you want to reset the weight matrix?")) {
+                                    for (let i = 0; i < props.state.neurons; ++i) {
+                                        for (let j = 0; j < props.state.neurons; ++j) {
+                                            props.state.weights[i][j] = 0;
+                                        }
+                                    }
+                                }
+                            })}/>
+                        </div>
+                        <div className="grow"/>
+                        <Input label="Duplicate first row">
                             <Toggle enabled={duplicateFirstRow} onChange={value => {
                                 setDuplicateFirstRow(value);
                                 if (value) action(() => {
