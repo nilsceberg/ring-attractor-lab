@@ -49,12 +49,14 @@ export function wrapAngle(theta: number, offset: number = 0): number {
 export function populationVectorAverage(activity: number[]) {
     let vector = [0, 0];
     let delta = 2 * Math.PI / activity.length;
+    let totalActivity = 0;
     for (let i=0; i<activity.length; ++i) {
         vector[0] += activity[i] * Math.cos(delta * i);
         vector[1] += activity[i] * Math.sin(delta * i);
+        totalActivity += activity[i];
     }
-    vector[0] /= 2;
-    vector[1] /= 2;
+    vector[0] /= totalActivity;
+    vector[1] /= totalActivity;
     return vector;
 }
 
