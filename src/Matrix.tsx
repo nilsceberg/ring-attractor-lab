@@ -115,7 +115,7 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                             })}/>
                         </div>
                         <div className="grow"/>
-                        <Input label="Duplicate first row">
+                        <Input label="Repeat and shift first row">
                             <Toggle enabled={duplicateFirstRow} onChange={value => {
                                 setDuplicateFirstRow(value);
                                 if (value) action(() => {
