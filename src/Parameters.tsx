@@ -109,11 +109,9 @@ export const Parameters = observer((props: Props) => {
     const MAX_STRENGTH = 5.0;
     const MAX_WIDTH = 180;
 
-
-
     return (
         <>
-          <div className="flex-1/2 pl-10">
+          <div className="pl-10">
             {/*<button onClick={action(() => props.state.activity = randomActivity(props.state.neurons))}>Randomize activity</button>*/}
             {/*<Divider>Simulation</Divider>*/}
             {/*<Input label="Neuronal time constant">
@@ -191,8 +189,9 @@ export const Parameters = observer((props: Props) => {
                     <div className="h-full grow text-right mt-[-6px]">{props.state.paused ? <Pause fontSize="large"/> : <PlayArrow fontSize="large"/>} {props.state.time.toFixed(2)} s</div>
                 </Input>
             </Row>
+            <Divider>Weight Matrix</Divider>
           </div>
-          <div className="flex-1/2 overflow-hidden">
+          <div className="flex-1/2 pl-10 pt-2 overflow-hidden">
             <Matrix state={props.state} highlight={props.highlight} setHovering={props.setHovering}/>
           </div>
         </>
