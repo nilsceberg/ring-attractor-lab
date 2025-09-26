@@ -186,7 +186,7 @@ export const Parameters = observer((props: Props) => {
                 <Input label="Neuron count" className="grow">
                     <Numeric min={4} max={16} value={props.state.neurons} precision={0} onChange={value => { if (value <= 16 && value >= 4 && value % 2 === 0) props.onSetNeuronCount(value); }}/>
                     <Slider min={4} max={16} step={2} value={props.state.neurons} onChange={value => props.onSetNeuronCount(value)}/>
-                    <div className="h-full grow text-right mt-[-6px]">{props.state.paused ? <Pause fontSize="large"/> : <PlayArrow fontSize="large"/>} {props.state.time.toFixed(2)} s</div>
+                    <div className="h-full grow text-right mt-[-6px]"><div className="inline cursor-pointer" onClick={() => props.state.paused = !props.state.paused}>{!props.state.paused ? <Pause fontSize="large"/> : <PlayArrow fontSize="large"/>}</div> {props.state.time.toFixed(2)} s</div>
                 </Input>
             </Row>
             <Divider>Weight Matrix</Divider>
