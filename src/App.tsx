@@ -62,7 +62,6 @@ const App = observer(() => {
 	useEffect(() => {
 		// TODO: do we need to clean this up?
 		window.onkeydown = e => {
-			console.log(e);
 			if (e.code === "Space") {
 				action(() => STATE.simulation.paused = !STATE.simulation.paused)();
 				return false;
