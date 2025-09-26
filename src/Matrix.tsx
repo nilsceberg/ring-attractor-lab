@@ -50,7 +50,10 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
     const [duplicateFirstRow, setDuplicateFirstRow] = useState(false);
 
     const [containerSize, containerRef] = useSize();
-    const fillSize = Math.min(containerSize[0], containerSize[1] - 50);
+    let fillSize = Math.min(containerSize[0], containerSize[1] - 50);
+    if (0.8 * fillSize > 400) {
+        fillSize *= .8;
+    }
 
     const style = {
         "fontSize": fillSize / 4 / props.state.neurons,
