@@ -1,15 +1,13 @@
 import { observer } from "mobx-react-lite";
 import * as d3 from "d3";
-import { DT, MAX_HISTORY_DURATION, MAX_HISTORY_SAMPLES } from "./settings";
-import { act, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { HistoryEntry } from "./Plots";
 import { preferenceAngle, SimulationState } from "./simulation";
-import { EXCITE, HEATMAP_COLOR, LINES } from "./colors";
-import { PNG } from 'pngjs/browser';
-import { Label } from "./Label";
-import { toDegrees, useSize } from "./util";
+import { LINES } from "./colors";
+import { toDegrees } from "./util";
 import { Divider } from "./ui";
 import { LegendState } from "./Legend";
+import { Heatmap } from "./Heatmap";
 
 interface ActivityHistoryProps {
     history: HistoryEntry[],
@@ -24,8 +22,6 @@ interface ActivityHistoryProps {
 }
 
 export const ActivityHistory = observer((props: ActivityHistoryProps) => {
-    const [containerSize, containerRef] = useSize();
-
     const x = d3.scaleLinear().domain(props.xExtent).range([0, 750]);
     const y = d3.scaleLinear().domain(props.yExtent).range([0, -100]);
     const lines = d3.line(d => x(d[0]), d => y(d[1]));
@@ -57,21 +53,6 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
         d3.select(rightAxis.current).call(axis as any).attr("transform", "translate(750, 0)");
     }, [xAxis.current, yAxis.current, rightAxis.current]);
 
-    const num_neurons = props.state.neurons;
-    let png = new PNG({
-        width: MAX_HISTORY_SAMPLES,
-        height: num_neurons,
-    });
-    if (legend.heatmap) {
-        for (let i=0; i<props.history.length; ++i) {
-            const activity = props.history[props.history.length - i - 1].activity;
-            const k = MAX_HISTORY_SAMPLES - i - 1;
-            for (let j=0; j < activity.length; ++j) {
-                png.data.writeUInt32BE((HEATMAP_COLOR << 8) + Math.round(activity[j] * 255), 4*(MAX_HISTORY_SAMPLES * ((num_neurons - j - 1 + num_neurons / 2) % num_neurons) + k))
-            }
-        }
-    }
-    const img = PNG.sync.write(png).toString("base64");
 
     const curveElements = [];
     for (const i in curves) {
@@ -113,8 +94,8 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     return (
         <div className="relative w-full h-full flex flex-col">
             <Divider>History</Divider>
-            <svg className="grow-1 w-full" viewBox="-50 -110 850 145" ref={containerRef}>
-                <image imageRendering="pixelated" preserveAspectRatio="none" x={x(props.xExtent[0])} y={y(props.yExtent[1])} width={x(props.xExtent[1]) - x(props.xExtent[0])} height={y(props.yExtent[0]) - y(props.yExtent[1])} xlinkHref={`data:image/png;base64,${img}`}/>
+            <svg className="grow-1 w-full" viewBox="-50 -110 850 145">
+                <Heatmap show={legend.heatmap} state={props.state} history={props.history} xExtent={[x(props.xExtent[0]), x(props.xExtent[1])]} yExtent={[y(props.yExtent[0]), y(props.yExtent[1])]}/>
                 <g ref={xAxis}/>
                 <g ref={yAxis}/>
                 <g ref={rightAxis}/>
