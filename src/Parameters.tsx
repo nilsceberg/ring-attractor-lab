@@ -188,7 +188,7 @@ export const Parameters = observer((props: Props) => {
             </Row>
             <Divider>Weight Matrix</Divider>
           </div>
-          <div className="flex-1/2 pl-10 pt-2 overflow-hidden">
+          <div className="flex-1/2 pt-2 overflow-hidden">
             <Matrix state={props.state} highlight={props.highlight} setHovering={props.setHovering}/>
           </div>
         </>
