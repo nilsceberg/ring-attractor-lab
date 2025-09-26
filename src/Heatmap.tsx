@@ -86,6 +86,11 @@ export const Heatmap = (props: HeatmapProps) => {
     const headChunk = PNG.sync.write(data.current!.head).toString("base64");
     const chunkWidth = (props.xExtent[1] - props.xExtent[0]) / CHUNK_COUNT;
     const headOffset = chunkWidth / data.current!.chunkWidth * data.current!.headColumn;
+
+    if (!props.show) {
+        return <></>;
+    }
+
     return (
         <>
             <defs>
