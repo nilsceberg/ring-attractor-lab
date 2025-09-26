@@ -4,6 +4,7 @@ import { MAX_HISTORY_DURATION } from "./settings";
 import { useEffect, useRef } from "react";
 import { LINES } from "./colors";
 import { Label } from "./Label";
+import { Divider } from "./ui";
 
 interface PlotProps {
     curves?: [number, number][][],
@@ -33,9 +34,9 @@ export const ActivitySnapshot = observer((props: PlotProps) => {
     }, [bars, xAxis.current, yAxis.current]);
 
     return (
-        <div className="relative w-full h-full">
-            <Label>Instantaneous activity</Label>
-            <svg className="w-full h-full" viewBox="-50 -120 850 180">
+        <div className="relative w-full h-full flex flex-col">
+            <Divider>Instantaneous activity</Divider>
+            <svg className="grow-1 border-1" viewBox="-50 -120 850 180">
                 <g ref={xAxis}/>
                 <g ref={yAxis}/>
                 <g>

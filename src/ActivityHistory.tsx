@@ -4,10 +4,13 @@ import { DT, MAX_HISTORY_DURATION, MAX_HISTORY_SAMPLES } from "./settings";
 import { act, useEffect, useRef, useState } from "react";
 import { HistoryEntry } from "./Plots";
 import { preferenceAngle, SimulationState } from "./simulation";
-import { EXCITE, LINES } from "./colors";
+import { EXCITE, HEATMAP_COLOR, LINES } from "./colors";
 import { PNG } from 'pngjs/browser';
 import { Label } from "./Label";
 import { toDegrees } from "./util";
+import { Divider } from "./ui";
+import { Legend, LegendState } from "./Legend";
+import { PanoramaVertical } from "@mui/icons-material";
 
 interface ActivityHistoryProps {
     history: HistoryEntry[],
@@ -20,37 +23,19 @@ interface ActivityHistoryProps {
     state: SimulationState,
 }
 
-enum LegendType {
-    Line, Heatmap
-}
-
-interface LegendElementProps {
-    type: LegendType,
-    color: string,
-    name: string,
-    show: boolean,
-    onClick?: () => void,
-}
-
-const LegendElement = (props: LegendElementProps) => {
-    const className = props.type === LegendType.Heatmap ? "h-4 mb-[-3]" : "h-1 mb-1";
-
-    return <div className="m-3 text-[10pt] cursor-pointer align-middle" style={{ opacity: props.show ? 1.0 : 0.3 }} onClick={_ => (props.onClick || (() => {}))()}>
-        <div className={`inline-block w-4 ${className} mr-2`} style={{ backgroundColor: props.color }}/>{props.name}
-    </div>;
-}
-
 export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     const x = d3.scaleLinear().domain(props.xExtent).range([0, 750]);
     const y = d3.scaleLinear().domain(props.yExtent).range([0, -100]);
     const lines = d3.line(d => x(d[0]), d => y(d[1]));
 
-    const [showHeatmap, setShowHeatmap] = useState(true);
-    const [showPVA, setShowPVA] = useState(true);
-    const [showStimulusA, setShowStimulusA] = useState(true);
-    const [showStimulusB, setShowStimulusB] = useState(true);
+    const [legendState, setLegendState] = useState<LegendState>({
+        heatmap: true,
+        pva: true,
+        stimulusA: true,
+        stimulusB: true,
+    });
 
-    const showCurves = [showPVA, showStimulusA, showStimulusB];
+    const showCurves = [legendState.pva, legendState.stimulusA, legendState.stimulusB];
     const curves = (props.curves || []).filter((_, i) => showCurves[i]);
     const curveColors = (props.curveColors || []).filter((_, i) => showCurves[i]);
     const bars = props.bars || [];
@@ -81,8 +66,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
         width: MAX_HISTORY_SAMPLES,
         height: num_neurons,
     });
-    const HEATMAP_COLOR = 0x6080ff;
-    if (showHeatmap) {
+    if (legendState.heatmap) {
         for (let i=0; i<props.history.length; ++i) {
             const activity = props.history[props.history.length - i - 1].activity;
             const k = MAX_HISTORY_SAMPLES - i - 1;
@@ -132,8 +116,8 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
 
     return (
         <div className="relative w-full h-full flex flex-col">
-            <Label>Activity over time with PVA angle</Label>
-            <svg className="absolute w-full h-full" viewBox="-50 -100 850 180">
+            <Divider>History</Divider>
+            <svg className="grow-1 w-full border-1" viewBox="-50 -100 850 180">
                 <image imageRendering="pixelated" preserveAspectRatio="none" x={x(props.xExtent[0])} y={y(props.yExtent[1])} width={x(props.xExtent[1]) - x(props.xExtent[0])} height={y(props.yExtent[0]) - y(props.yExtent[1])} xlinkHref={`data:image/png;base64,${img}`}/>
                 <g ref={xAxis}/>
                 <g ref={yAxis}/>
@@ -146,14 +130,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
                 {/*<text textAnchor="left" x={760} y={0} dy="1.75em" fill={LINES} fontSize={9}>seconds ago</text>*/}
                 <text textAnchor="left" x={360} y={20} dy="1em" fill={LINES} fontSize={9}>seconds ago</text>
             </svg>
-            <div className="absolute bottom-0 flex flex-row w-full">
-                <div className="grow"/>
-                <LegendElement type={LegendType.Heatmap} color={"#" + HEATMAP_COLOR.toString(16)} name="activity heatmap" show={showHeatmap} onClick={() => setShowHeatmap(!showHeatmap)}/>
-                <LegendElement type={LegendType.Line} color={props.curveColors![0]} name="PVA angle" show={showPVA} onClick={() => setShowPVA(!showPVA)}/>
-                <LegendElement type={LegendType.Line} color={props.curveColors![1]} name="stimulus A location" show={showStimulusA} onClick={() => setShowStimulusA(!showStimulusA)}/>
-                <LegendElement type={LegendType.Line} color={props.curveColors![2]} name="stimulus B location" show={showStimulusB} onClick={() => setShowStimulusB(!showStimulusB)}/>
-                <div className="grow"/>
-            </div>
+            <Legend colors={props.curveColors!} state={legendState} updateState={setLegendState}/>
         </div>
     );
 });

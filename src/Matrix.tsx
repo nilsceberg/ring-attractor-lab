@@ -60,7 +60,6 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
 
     return (
         <>
-            <Label>Connectivity matrix</Label>
             <div className="w-full h-full flex flex-row items-center" ref={containerRef}>
                 <div className="grow"/>
                 <div className="flex flex-col">

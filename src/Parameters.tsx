@@ -6,6 +6,7 @@ import { Pause, PlayArrow } from "@mui/icons-material";
 import { STIMULI } from "./colors";
 import { toDegrees, toRadians } from "./util";
 import { Matrix } from "./Matrix";
+import { Divider } from "./ui";
 
 export const Input = (props: PropsWithChildren<{ label: string, className?: string}>) => {
     return <div className={`flex flex-col m-1 w-full ${props.className || ""}`}>
@@ -41,10 +42,6 @@ const Numeric = (props: { value: number, min: number, max: number, precision?: n
 const Slider = (props: { value: number, min: number, max: number, step?: number, onChange: (value: any) => void }) => {
     const step = props.step || (props.max - props.min) / 1000;
     return <input className="basis-0 grow-[3]" type="range" value={props.value} onChange={e => props.onChange(parseFloat(e.target.value) || 0)} max={props.max} min={props.min} step={step}/>;
-}
-
-const Divider = (props: PropsWithChildren<{}>) => {
-    return <div className="w-full ml-auto mr-auto text-center border-b-1 border-[#777] text-[#ccc] mb-2 mt-3">{props.children}</div>
 }
 
 export const Toggle = (props: { enabled: boolean, onChange?: (enabled: boolean) => void }) => {
@@ -111,7 +108,7 @@ export const Parameters = observer((props: Props) => {
 
     return (
         <>
-          <div className="pl-10">
+          <div className="pl-0">
             {/*<button onClick={action(() => props.state.activity = randomActivity(props.state.neurons))}>Randomize activity</button>*/}
             {/*<Divider>Simulation</Divider>*/}
             {/*<Input label="Neuronal time constant">

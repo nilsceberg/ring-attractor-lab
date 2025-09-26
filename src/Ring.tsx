@@ -4,6 +4,7 @@ import { SimulationState, Stimulus } from "./simulation";
 import { useEffect, useRef, useState } from "react";
 import { STIMULI } from "./colors";
 import { Label } from "./Label";
+import { Divider } from "./ui";
 
 const useSvg = (f: (element: d3.Selection<SVGSVGElement, any, any, any>) => void, deps: any[] = []) => {
   const ref = useRef<SVGSVGElement>(null);
@@ -118,9 +119,9 @@ export const Ring = observer((props: { state: SimulationState, stimuli: Stimulus
   };
 
   return (
-    <>
-      <Label>Population vector average</Label>
-      <svg className="w-full h-full" viewBox="-400 -400 800 800" ref={ref}>
+    <div className="flex flex-col h-full pl-4 pr-4">
+      <Divider>Network</Divider>
+      <svg className="w-full grow-1" viewBox="-400 -400 800 800" ref={ref}>
         <g>
           {arcs.map((d, i) => <path key={i} {...cellStyle(props.state.activity[i], i, highlight)} d={arc(d as any) as string} onMouseEnter={() => { if (props.setHovering) props.setHovering(i) }} onMouseLeave={() => { if (props.setHovering) props.setHovering(undefined) }}/>)}
         </g>
@@ -150,6 +151,6 @@ export const Ring = observer((props: { state: SimulationState, stimuli: Stimulus
           }
         </g>
       </svg>
-    </>
+    </div>
   );
 });

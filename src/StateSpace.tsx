@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { populationVectorAverage, SimulationState, wrapAngle } from "./simulation";
 import { LINES } from "./colors";
 import { Label } from "./Label";
+import { Divider } from "./ui";
 
 const GRID_COLOR=LINES;
 const RADII = 16;
@@ -26,9 +27,9 @@ export const StateSpace = observer((props: { state: SimulationState }) => {
   const pva = populationVectorAverage(props.state.activity);
 
   return (
-    <>
-      <Label>Population vector average</Label>
-      <svg className="w-full h-full" viewBox="-400 -400 800 800">
+    <div className="flex flex-col h-full">
+      <Divider>Population vector average</Divider>
+      <svg className="grow-1" viewBox="-400 -400 800 800">
         <g>
           <circle cx={0} cy={0} r={radius(1)} fill="none" stroke={GRID_COLOR}/>
           <circle cx={0} cy={0} r={radius(0.5)} fill="none" stroke={GRID_COLOR}/>
@@ -36,6 +37,6 @@ export const StateSpace = observer((props: { state: SimulationState }) => {
         </g>
         <circle cx={radius(pva[1])} cy={-radius(pva[0])} r={10} fill="white"/>
       </svg>
-    </>
+    </div>
   );
 });
