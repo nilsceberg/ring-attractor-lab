@@ -2,7 +2,6 @@ import { observer } from "mobx-react-lite";
 import { SimulationState } from "./simulation";
 import { ChangeEvent, FocusEvent, KeyboardEvent, PropsWithChildren, useRef, useState } from "react";
 import { action } from "mobx";
-import { Label } from "./Label";
 import { Button, Toggle } from "./Parameters";
 import { useSize } from "./util";
 

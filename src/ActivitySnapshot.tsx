@@ -1,9 +1,7 @@
 import { observer } from "mobx-react-lite";
 import * as d3 from "d3";
-import { MAX_HISTORY_DURATION } from "./settings";
 import { useEffect, useRef } from "react";
 import { LINES } from "./colors";
-import { Label } from "./Label";
 import { Divider } from "./ui";
 
 interface PlotProps {

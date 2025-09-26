@@ -2,7 +2,6 @@ import * as d3 from "d3";
 import { observer } from "mobx-react-lite";
 import { populationVectorAverage, SimulationState, wrapAngle } from "./simulation";
 import { LINES } from "./colors";
-import { Label } from "./Label";
 import { Divider } from "./ui";
 
 const GRID_COLOR=LINES;

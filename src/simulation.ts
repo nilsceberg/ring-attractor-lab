@@ -79,10 +79,9 @@ export function createWeights(neurons: number, a: number, b: number): number[][]
                 continue;
             }
 
-            let theta = preferenceAngle(neurons, i); //2 * Math.PI / neurons * i;
-            let phi = preferenceAngle(neurons, j); //2 * Math.PI / neurons * j;
+            let theta = preferenceAngle(neurons, i);
+            let phi = preferenceAngle(neurons, j);
             weights[i][j] = weightFunction(theta, phi, a, b);
-            //weights[i][j] -= c + (1-c)*d*Math.cos(theta - phi);
         }
     }
     return weights;
@@ -107,7 +106,6 @@ export function initialState(neurons: number): SimulationState {
 export function sampleStimulus(stimulus: Stimulus, at: number): number {
     const distance = Math.abs(wrapAngle(at - stimulus.location)) / stimulus.width;
     if (distance < 1) {
-        // inputStrength * Math.cos(inputAngle - delta * i));
         return stimulus.strength * (Math.cos(distance * Math.PI) * 0.5 + 0.5);
     }
     else {
