@@ -5,6 +5,7 @@ import { MAX_HISTORY_SAMPLES } from "./settings";
 import { HistoryEntry } from "./Plots";
 import { useMemo, useRef } from "react";
 import createColormap from "colormap";
+import { observer } from "mobx-react-lite";
 
 interface HeatmapData {
     completedChunks: string[],
@@ -46,7 +47,7 @@ interface HeatmapProps {
 }
 
 const CHUNK_COUNT = 4;
-export const Heatmap = (props: HeatmapProps) => {
+export const Heatmap = observer((props: HeatmapProps) => {
     const colors = useMemo(() => createColormap({
         colormap: "inferno",
         nshades: 32,
@@ -126,4 +127,4 @@ export const Heatmap = (props: HeatmapProps) => {
                 xlinkHref={`data:image/png;base64,${headChunk}`}/>
         </>
     );
-}
+});
