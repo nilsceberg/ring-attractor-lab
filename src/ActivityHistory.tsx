@@ -7,7 +7,7 @@ import { preferenceAngle, SimulationState } from "./simulation";
 import { EXCITE, HEATMAP_COLOR, LINES } from "./colors";
 import { PNG } from 'pngjs/browser';
 import { Label } from "./Label";
-import { toDegrees } from "./util";
+import { toDegrees, useSize } from "./util";
 import { Divider } from "./ui";
 import { LegendState } from "./Legend";
 
@@ -24,6 +24,8 @@ interface ActivityHistoryProps {
 }
 
 export const ActivityHistory = observer((props: ActivityHistoryProps) => {
+    const [containerSize, containerRef] = useSize();
+
     const x = d3.scaleLinear().domain(props.xExtent).range([0, 750]);
     const y = d3.scaleLinear().domain(props.yExtent).range([0, -100]);
     const lines = d3.line(d => x(d[0]), d => y(d[1]));
@@ -111,7 +113,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     return (
         <div className="relative w-full h-full flex flex-col">
             <Divider>History</Divider>
-            <svg className="grow-1 w-full border-1" viewBox="-50 -100 850 180">
+            <svg className="grow-1 w-full" viewBox="-50 -110 850 145" ref={containerRef}>
                 <image imageRendering="pixelated" preserveAspectRatio="none" x={x(props.xExtent[0])} y={y(props.yExtent[1])} width={x(props.xExtent[1]) - x(props.xExtent[0])} height={y(props.yExtent[0]) - y(props.yExtent[1])} xlinkHref={`data:image/png;base64,${img}`}/>
                 <g ref={xAxis}/>
                 <g ref={yAxis}/>

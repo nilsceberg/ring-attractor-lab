@@ -44,7 +44,7 @@ export const Plots = observer((props: Props) => {
     const curveColors = ["white"].concat(colors.STIMULI);
 
     return (
-        <div className="flex flex-col w-full h-full p-4">
+        <div className="flex flex-col w-full h-full pl-4">
             <div className="flex-1/2 overflow-hidden">
                 <ActivitySnapshot yExtent={[0, 1]}
                     xExtent={[-1, props.state.neurons]}

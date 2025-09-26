@@ -28,7 +28,7 @@ export const StateSpace = observer((props: { state: SimulationState }) => {
 
   return (
     <div className="flex flex-col h-full">
-      <Divider>Population vector average</Divider>
+      <Divider>Population Vector Average</Divider>
       <svg className="grow-1" viewBox="-400 -400 800 800">
         <g>
           <circle cx={0} cy={0} r={radius(1)} fill="none" stroke={GRID_COLOR}/>

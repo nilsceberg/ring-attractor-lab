@@ -49,7 +49,7 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
 
     const [duplicateFirstRow, setDuplicateFirstRow] = useState(false);
 
-    const [containerRef, containerSize] = useSize();
+    const [containerSize, containerRef] = useSize();
     const fillSize = Math.min(containerSize[0], containerSize[1] - 50);
 
     const style = {
