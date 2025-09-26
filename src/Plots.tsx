@@ -8,6 +8,7 @@ import { MAX_HISTORY_DURATION } from "./settings";
 import { InputParameters } from "./Parameters";
 import { ActivityHistory } from "./ActivityHistory";
 import * as colors from "./colors";
+import { Legend, LegendState } from "./Legend";
 
 export interface HistoryEntry {
     time: number,
@@ -23,6 +24,13 @@ interface Props {
 }
 
 export const Plots = observer((props: Props) => {
+    const [legendState, setLegendState] = useState<LegendState>({
+        heatmap: true,
+        pva: true,
+        stimulusA: true,
+        stimulusB: true,
+    });
+
     const now = props.state.time;
     const [min, max] = d3.extent(props.history, d => d.time) as [number, number];
     //const timeExtent: [number, number] = [min, min + MAX_HISTORY_DURATION];
@@ -32,6 +40,8 @@ export const Plots = observer((props: Props) => {
     const fieldOffset = Math.PI / props.state.neurons;
 
     const STIMULI = [0, 1];
+
+    const curveColors = ["white"].concat(colors.STIMULI);
 
     return (
         <div className="flex flex-col w-full h-full p-4">
@@ -47,14 +57,16 @@ export const Plots = observer((props: Props) => {
                     state={props.state}
                     xExtent={timeExtent}
                     history={props.history}
+                    legend={legendState}
                     curves={
                         [
                             props.history.map(d => [d.time - now, wrapAngle(decodeAngle(d.activity), Math.PI / props.state.neurons)] as [number, number])
                         ].concat(STIMULI.map((_, index) => props.history.map(d => [d.time - now, wrapAngle(d.stimuli[index].location, fieldOffset)] as [number, number])))
                     }
-                    curveColors={["white"].concat(colors.STIMULI)}
+                    curveColors={curveColors}
                     />
             </div>
+            <Legend state={legendState} updateState={setLegendState} colors={curveColors}/>
         </div>
     )
 });

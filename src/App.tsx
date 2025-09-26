@@ -91,7 +91,7 @@ const App = observer(() => {
               <StateSpace state={STATE.simulation}/>
             </div>
           </div>
-          <div className="flex-1/2">
+          <div className="flex-1/2 overflow-hidden">
             <Plots state={STATE.simulation} history={STATE.history} inputs={STATE.inputs} highlight={STATE.highlight}/>
           </div>
         </div>

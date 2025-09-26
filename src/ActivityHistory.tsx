@@ -9,8 +9,7 @@ import { PNG } from 'pngjs/browser';
 import { Label } from "./Label";
 import { toDegrees } from "./util";
 import { Divider } from "./ui";
-import { Legend, LegendState } from "./Legend";
-import { PanoramaVertical } from "@mui/icons-material";
+import { LegendState } from "./Legend";
 
 interface ActivityHistoryProps {
     history: HistoryEntry[],
@@ -21,6 +20,7 @@ interface ActivityHistoryProps {
     bars?: [number, number][][],
     barStyles?: any[][],
     state: SimulationState,
+    legend: LegendState,
 }
 
 export const ActivityHistory = observer((props: ActivityHistoryProps) => {
@@ -28,14 +28,8 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     const y = d3.scaleLinear().domain(props.yExtent).range([0, -100]);
     const lines = d3.line(d => x(d[0]), d => y(d[1]));
 
-    const [legendState, setLegendState] = useState<LegendState>({
-        heatmap: true,
-        pva: true,
-        stimulusA: true,
-        stimulusB: true,
-    });
-
-    const showCurves = [legendState.pva, legendState.stimulusA, legendState.stimulusB];
+    const legend = props.legend;
+    const showCurves = [legend.pva, legend.stimulusA, legend.stimulusB];
     const curves = (props.curves || []).filter((_, i) => showCurves[i]);
     const curveColors = (props.curveColors || []).filter((_, i) => showCurves[i]);
     const bars = props.bars || [];
@@ -66,7 +60,7 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
         width: MAX_HISTORY_SAMPLES,
         height: num_neurons,
     });
-    if (legendState.heatmap) {
+    if (legend.heatmap) {
         for (let i=0; i<props.history.length; ++i) {
             const activity = props.history[props.history.length - i - 1].activity;
             const k = MAX_HISTORY_SAMPLES - i - 1;
@@ -130,7 +124,6 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
                 {/*<text textAnchor="left" x={760} y={0} dy="1.75em" fill={LINES} fontSize={9}>seconds ago</text>*/}
                 <text textAnchor="left" x={360} y={20} dy="1em" fill={LINES} fontSize={9}>seconds ago</text>
             </svg>
-            <Legend colors={props.curveColors!} state={legendState} updateState={setLegendState}/>
         </div>
     );
 });
