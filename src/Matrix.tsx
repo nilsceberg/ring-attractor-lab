@@ -130,6 +130,9 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                         <div className="grow"/>
                         <Input label="Repeat and shift first row">
                             <Toggle enabled={duplicateFirstRow} onChange={value => {
+                                if (value) {
+                                    if (!confirm("Are you sure you want to repeat the first row? This will overwrite all other rows.")) return;
+                                }
                                 setDuplicateFirstRow(value);
                                 if (value) action(() => {
                                     for (let j = 0; j < props.state.neurons; ++j) {
