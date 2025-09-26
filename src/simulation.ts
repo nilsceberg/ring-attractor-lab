@@ -34,13 +34,13 @@ export function whiteNoiseDifferential(neurons: number): number[] {
 }
 
 export function weightFunction(theta: number, phi: number, a: number, b: number): number {
-    if (theta == phi) {
-        return 0;
-    }
-    else {
-        return Math.cos(theta - phi);
-    }
-    //return //a + (1-a)*b*Math.cos(theta - phi);
+    //if (theta == phi) {
+    //    return 0;
+    //}
+    //else {
+    //    return Math.cos(theta - phi);
+    //}
+    return a + (1-a)*b*Math.cos(theta - phi);
 }
 
 export function preferenceAngle(neurons: number, i: number): number {
@@ -119,8 +119,8 @@ export function step(state: SimulationState, dt: number, stimuli: Stimulus[]): S
     const newState = Object.assign({}, state);
     newState.time += dt;
 
-    const a = 1;
-    const b = 0.5;
+    const a = 4;
+    const b = 0.4;
     const f = (x: number) => 1 / (1 + Math.exp(-a*(x - b)));
 
     // input
