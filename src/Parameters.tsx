@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
-import { createWeights, initialState, randomActivity, SimulationState } from "./simulation";
-import { ChangeEvent, FocusEvent, PropsWithChildren, useState } from "react";
+import { createWeights, SimulationState } from "./simulation";
+import { ChangeEvent, KeyboardEvent, PropsWithChildren, useState } from "react";
 import { action } from "mobx";
 import { Pause, PlayArrow } from "@mui/icons-material";
 import { STIMULI } from "./colors";
@@ -26,7 +26,7 @@ const Numeric = (props: { value: number, min: number, max: number, precision?: n
         setIntermediate(event.target.value);
     };
 
-    const onBlur = (_event: FocusEvent<HTMLInputElement>) => {
+    const onBlur = () => {
         if (intermediate !== null) {
             const value = parseFloat(intermediate);
             if (!Number.isNaN(value)) {
@@ -36,7 +36,13 @@ const Numeric = (props: { value: number, min: number, max: number, precision?: n
         }
     };
 
-    return <input className="basis-0 w-[100px] pl-1" type="text" value={value} onChange={onChange} onBlur={onBlur} max={props.max.toPrecision(3)} min={props.min.toPrecision(3)} />;
+    const onKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Enter") {
+            onBlur();
+        }
+    }
+
+    return <input className="basis-0 w-[100px] pl-1" type="text" value={value} onChange={onChange} onBlur={onBlur} max={props.max.toPrecision(3)} min={props.min.toPrecision(3)} onKeyDown={onKeyDown}/>;
 }
 
 const Slider = (props: { value: number, min: number, max: number, step?: number, onChange: (value: any) => void }) => {

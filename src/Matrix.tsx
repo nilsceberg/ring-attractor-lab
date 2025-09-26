@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { SimulationState } from "./simulation";
-import { ChangeEvent, FocusEvent, PropsWithChildren, useRef, useState } from "react";
+import { ChangeEvent, FocusEvent, KeyboardEvent, PropsWithChildren, useRef, useState } from "react";
 import { action } from "mobx";
 import { Label } from "./Label";
 import { Button, Toggle } from "./Parameters";
@@ -97,10 +97,15 @@ export const Matrix = observer((props: { state: SimulationState, highlight: numb
                                             });
 
                                             const onFocus = (e: FocusEvent<HTMLInputElement>) => e.target.select();
+                                            const onKeyDown = (e: KeyboardEvent) => {
+                                                if (e.key === "Enter") {
+                                                    onBlur();
+                                                }
+                                            };
 
                                             return (
                                                 <div key={j} className="border-1 border-[#666]" style={style}>
-                                                    <input disabled={duplicateFirstRow && i !== 0} className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight, duplicateFirstRow), color: duplicateFirstRow && i !== 0 ? "#555" : "" /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus}/>
+                                                    <input disabled={duplicateFirstRow && i !== 0} className="outline-0 text-center h-full w-full" style={{ backgroundColor: colorMap(i, w, props.highlight, duplicateFirstRow), color: duplicateFirstRow && i !== 0 ? "#555" : "" /*, width: "54px", height: "54px" */}} value={inputValue} onChange={onChange} onBlur={onBlur} onFocus={onFocus} onKeyDown={onKeyDown}/>
                                                 </div>
                                                 );
                                             }
