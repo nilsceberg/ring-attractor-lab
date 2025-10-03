@@ -5,17 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { STIMULI } from "./colors";
 import { Divider } from "./ui";
 
-const useSvg = (f: (element: d3.Selection<SVGSVGElement, any, any, any>) => void, deps: any[] = []) => {
-	const ref = useRef<SVGSVGElement>(null);
-	useEffect(() => {
-		if (ref.current) {
-			let element = d3.select(ref.current);
-			f(element);
-		}
-	}, [ref].concat(deps));
-	return ref;
-}
-
 function highlightOpacity(i: number, highlight: number | undefined): number {
 	if (highlight === undefined || highlight === i) {
 		return 1.0;
@@ -58,7 +47,7 @@ export const Ring = observer((props: { state: SimulationState, stimuli: Stimulus
 		data.push(1);
 	}
 	
-	const padAngle = 0.20;
+	const padAngle = 0.20 * 8 / props.state.neurons;
 	const pie = d3.pie().padAngle(padAngle).startAngle(-Math.PI/props.state.neurons);
 	const arcs = pie(data);
 	const arc = d3.arc().innerRadius(250).outerRadius(350).padAngle(padAngle);
