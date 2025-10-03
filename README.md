@@ -1,4 +1,6 @@
-![Ring attractor network model](./images/ring.svg)
+<center>
+    <img width="400px" height="400px" src="./images/ring.png"/>
+</center>
 
 # Ring attractor lab tool
 
