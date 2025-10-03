@@ -41,16 +41,17 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
         d3.select(xAxis.current).call(axis as any);
 
         const ticks = [];
-        for (let i=0; i<props.state.neurons; ++i) {
+        const tickStep = props.state.neurons <= 8 ? 1 : 2;
+        for (let i=0; i<props.state.neurons; i+=tickStep) {
             ticks.push(preferenceAngle(props.state.neurons, i));
         }
 
-        var axis = d3.axisLeft(y).tickValues(ticks).tickFormat((value, index) => `${index + 1}`);
+        var axis = d3.axisLeft(y).tickValues(ticks).tickFormat((value, index) => `${index * tickStep + 1}`);
         d3.select(yAxis.current).call(axis as any);
 
         var axis = d3.axisRight(y).tickValues(ticks).tickFormat((value, index) => `${toDegrees(value as number).toFixed(0)}`);
         d3.select(rightAxis.current).call(axis as any).attr("transform", "translate(750, 0)");
-    }, [xAxis.current, yAxis.current, rightAxis.current]);
+    }, [xAxis.current, yAxis.current, rightAxis.current, props.state.neurons]);
 
 
     const curveElements = [];
