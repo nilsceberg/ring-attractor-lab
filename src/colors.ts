@@ -7,7 +7,7 @@ export const STIMULI = ["#df79e8", "#68f27f"];
 export const HEATMAP_COLOR = 0x6080ff;
 
 export const COLOR_MAP = createColormap({
-    colormap: "inferno",
+    colormap: "magma",
     nshades: 32,
     format: "hex",
 }).map(s => Number.parseInt(s.substring(1), 16));
