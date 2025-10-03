@@ -1,5 +1,5 @@
 import { PNG } from "pngjs/browser";
-import { HEATMAP_COLOR } from "./colors";
+import { HEATMAP_COLOR, mapColor } from "./colors";
 import { SimulationState } from "./simulation";
 import { MAX_HISTORY_SAMPLES } from "./settings";
 import { HistoryEntry } from "./Plots";
@@ -48,12 +48,6 @@ interface HeatmapProps {
 
 const CHUNK_COUNT = 4;
 export const Heatmap = observer((props: HeatmapProps) => {
-    const colors = useMemo(() => createColormap({
-        colormap: "inferno",
-        nshades: 32,
-        format: "hex",
-    }).map(s => Number.parseInt(s.substring(1), 16)), []);
-
     const data = useRef<HeatmapData>(null);
     if (!data.current || props.state.time < data.current.time) {
         data.current = initializeHeatmap(CHUNK_COUNT, MAX_HISTORY_SAMPLES, props.state.neurons);
@@ -62,13 +56,12 @@ export const Heatmap = observer((props: HeatmapProps) => {
     if (props.state.time > data.current!.time) {
         data.current!.time = props.state.time;
         // Time has advanced; record new data.
-        const color = HEATMAP_COLOR;
         const i = data.current!.headColumn;
         const width = data.current!.head.width;
         const height = data.current!.head.height;
         const activity = props.history[props.history.length - 1].activity;
         for (let j=0; j < props.state.neurons; ++j) {
-            const color = colors[Math.round(activity[j] * (colors.length - 1))];
+            const color = mapColor(activity[j]);
             data.current!.head.data.writeInt32BE(
                 (color << 8) + 0xff,// Math.round(activity[j] * 0xff),
                 4*(width * ((height - j - 1 + height / 2) % height) + i));

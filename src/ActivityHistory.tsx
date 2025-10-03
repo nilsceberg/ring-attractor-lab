@@ -30,7 +30,6 @@ export const ActivityHistory = observer((props: ActivityHistoryProps) => {
     const showCurves = [legend.pva, legend.stimulusA, legend.stimulusB];
     const curves = (props.curves || []).filter((_, i) => showCurves[i]);
     const curveColors = (props.curveColors || []).filter((_, i) => showCurves[i]);
-    const bars = props.bars || [];
 
     const xAxis = useRef(null);
     const yAxis = useRef(null);
