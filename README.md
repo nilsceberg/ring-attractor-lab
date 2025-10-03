@@ -1,21 +1,9 @@
-# bun-react-tailwind-template
+![Ring attractor network model](./images/ring.svg)
 
-To install dependencies:
+# Ring attractor lab tool
 
-```bash
-bun install
-```
+This is a tool for exploring simple ring attractor models.
 
-To start a development server:
+[Hosted on GitHub Pages](https://nilsceberg.github.io/ring-attractor-lab)
 
-```bash
-bun dev
-```
-
-To run for production:
-
-```bash
-bun start
-```
-
-This project was created using `bun init` in bun v1.2.16. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+![Screenshot](./images/screenshot.png)
