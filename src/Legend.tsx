@@ -29,7 +29,7 @@ interface LegendProps {
 
 const LegendElement = (props: LegendElementProps) => {
     const icon = props.type === LegendType.Heatmap 
-        ? <ColorBar className="inline-block float-left"/>
+        ? <ColorBar className="inline-block float-left mt-[2px]"/>
         : <div className="inline-block w-4 h-1 mt-2 mr-3 float-left" style={{ backgroundColor: props.color }}/>;
 
     return <div className="m-3 mr-5 text-[10pt] cursor-pointer align-middle" style={{ opacity: props.show ? 1.0 : 0.3 }} onClick={_ => (props.onClick || (() => {}))()}>
